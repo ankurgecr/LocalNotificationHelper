@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.DrawableRes;
@@ -111,13 +112,22 @@ public class TriggerNotificationService extends Service {
             String textContent
     ) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(smallIcon)
                 .setContentTitle(textTitle)
                 .setContentText(textContent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        if (smallIcon != -1) {
+            mBuilder.setSmallIcon(smallIcon);
+        }
+        if (largeIcon != -1) {
+            mBuilder.setLargeIcon(
+                    ((BitmapDrawable) context.getResources().getDrawable(largeIcon)).getBitmap()
+            );
+        }
+
         //.setCategory(NotificationCompat.CATEGORY_MESSAGE);
         //.setAutoCancel(true)
-        //.setLargeIcon(((BitmapDrawable) mContext.getResources().getDrawable(largeIcon)).getBitmap())
+        //
         //.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         return mBuilder.build();
     }

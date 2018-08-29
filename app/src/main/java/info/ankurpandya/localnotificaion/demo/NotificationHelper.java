@@ -22,7 +22,7 @@ public class NotificationHelper {
 
     private static String mDefaultTitle;
     @DrawableRes
-    private static int mDefaultIcon;
+    private static int mDefaultIcon = -1;
 
     public static void init(
             Class<?> callerClass,
@@ -48,13 +48,9 @@ public class NotificationHelper {
             long delay,
             boolean isRepeat
     ) {
-        String defaultChannelId = "";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            defaultChannelId = NotificationChannel.DEFAULT_CHANNEL_ID;
-        }
         schedule(
                 notificationId,
-                defaultChannelId,
+                null,
                 mDefaultIcon,
                 mDefaultIcon,
                 mDefaultTitle,
@@ -74,6 +70,10 @@ public class NotificationHelper {
             long delay,
             boolean isRepeat
     ) {
+        if (channelId == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channelId = NotificationChannel.DEFAULT_CHANNEL_ID;
+        }
+
         MyNotification notification = new MyNotification();
         notification.notificationId = notificationId;
         notification.channelId = channelId;

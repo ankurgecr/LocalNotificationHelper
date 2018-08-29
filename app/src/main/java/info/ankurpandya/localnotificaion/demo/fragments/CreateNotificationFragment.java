@@ -138,6 +138,7 @@ public class CreateNotificationFragment extends Fragment {
 
         mListener.createNotification(
                 Integer.parseInt(edt_id.getText().toString()),
+                edt_title.getText().toString(),
                 edt_text.getText().toString(),
                 delay,
                 toggle_repeat.isChecked()
@@ -217,7 +218,7 @@ public class CreateNotificationFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void createNotification(int id, String content, long delay, boolean repeat);
+        void createNotification(int id, String title, String content, long delay, boolean repeat);
 
         void showToast(String message);
 

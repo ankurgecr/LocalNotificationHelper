@@ -154,14 +154,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void createNotification(final int id, final String content, final long delay, final boolean repeat) {
+    public void createNotification(final int id, final String title, final String content, final long delay, final boolean repeat) {
         if (NotificationHelper.isScheduled(id)) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            createNotificationWithConfirmation(id, content, delay, repeat);
+                            createNotificationWithConfirmation(id, title, content, delay, repeat);
                             break;
                     }
                 }
@@ -173,12 +173,25 @@ public class MainActivity extends AppCompatActivity
                     .setNegativeButton(android.R.string.no, dialogClickListener)
                     .show();
         } else {
-            createNotificationWithConfirmation(id, content, delay, repeat);
+            createNotificationWithConfirmation(id, title, content, delay, repeat);
         }
     }
 
-    private void createNotificationWithConfirmation(int id, String content, long delay, boolean repeat) {
-        NotificationHelper.schedule(id, content, delay, repeat);
+    private void createNotificationWithConfirmation(int id, String title, String content, long delay, boolean repeat) {
+        //NotificationHelper.schedule(id, content, delay, repeat);
+        if (title == null) {
+            title = getString(R.string.app_name);
+        }
+        NotificationHelper.schedule(
+                id,
+                "",
+                R.drawable.ic_stat,
+                R.drawable.app_icon,
+                title,
+                content,
+                delay,
+                repeat
+        );
         showToast(getString(R.string.msg_notification_schedule));
         showNotificationListFragment();
         //refreshCurrentFragment();
