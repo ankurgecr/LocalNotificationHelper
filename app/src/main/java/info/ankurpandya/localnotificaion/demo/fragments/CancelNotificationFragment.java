@@ -19,6 +19,7 @@ public class CancelNotificationFragment extends Fragment {
 
     private EditText edt_id;
     private Button btn_cancel;
+    private View btn_cancel_all;
 
     public CancelNotificationFragment() {
         // Required empty public constructor
@@ -40,6 +41,7 @@ public class CancelNotificationFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_cancel_notification, container, false);
         edt_id = rootView.findViewById(R.id.edt_id);
         btn_cancel = rootView.findViewById(R.id.btn_cancel);
+        btn_cancel_all = rootView.findViewById(R.id.btn_cancel_all);
         return rootView;
     }
 
@@ -54,6 +56,16 @@ public class CancelNotificationFragment extends Fragment {
                 }
             }
         });
+        btn_cancel_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelAllNotifications();
+            }
+        });
+    }
+
+    private void cancelAllNotifications() {
+        mListener.cancelAllNotifications();
     }
 
     private void cancelNotification() {
@@ -68,7 +80,6 @@ public class CancelNotificationFragment extends Fragment {
     private void notifyNotificationCancelled() {
         edt_id.setText("");
         mListener.hideKeyboard();
-        mListener.showToast(getString(R.string.msg_notification_cancelled));
     }
 
     private boolean isValidData() {
@@ -102,8 +113,12 @@ public class CancelNotificationFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void cancelNotification(int notificationId);
 
+        boolean isScheduled(int notificationId);
+
         void showToast(String message);
 
         void hideKeyboard();
+
+        void cancelAllNotifications();
     }
 }

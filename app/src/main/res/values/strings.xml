@@ -11,12 +11,24 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_schedule">Schedule</string>
     <string name="msg_repeat_notification">Repeat notification</string>
+    <string name="hint_notification_title">Notification Title</string>
     <string name="hint_notification_text">Notification Text</string>
     <string name="delay">Delay</string>
+    <string name="msg_error_title_notification">Please enter a valid notification Title</string>
+    <string name="msg_error_id_notification">Please enter a valid notification id</string>
     <string name="msg_error_txt_notification">Please enter some text to show in notification</string>
     <string name="msg_error_txt_id">Please enter notification id to cancel</string>
     <string name="msg_notification_schedule">Notification scheduled</string>
-    <string name="msg_notification_cancelled">Notification cancelled</string>
+    <string name="msg_notification_cancelled">Notification unscheduled</string>
+    <string name="confirm_cancel_notification_title">Unscheduled notification </string>
+    <string name="msg_all_notification_cancelled">All notifications unscheduled</string>
     <string name="action_cancel">Cancel</string>
-    <string name="hint_notification_id">Notification Id</string>
+    <string name="hint_notification_id">Id</string>
+    <string name="confirm_delete_all_desc">Are you sure?</string>
+    <string name="confirm_delete_all_title">Unschedule all notifications</string>
+    <string name="confirm_override_notification_title">Notification already scheduled</string>
+    <string name="confirm_override_notification_desc">Do you want to override the notification on same Id?</string>
+    <string name="action_change">Change</string>
+    <string name="txt_empty_notification_list">No notification scheduled. User + to schedule a notification now</string>
+    <string name="msg_notification_not_scheduled_id">No notification scheduled on this id</string>
 </resources>

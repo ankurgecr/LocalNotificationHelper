@@ -21,11 +21,19 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".receivers.MyNotificationPublisher">
+        <receiver
+            android:name=".receivers.AlarmBootReceiver"
+            android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".services.TriggerNotificationService"
+            android:enabled="true"
+            android:exported="true" />
+
     </application>
 
 </manifest>

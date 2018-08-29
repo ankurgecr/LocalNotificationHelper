@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBGFragment"
     tools:context=".fragments.CreateNotificationFragment">
 
     <LinearLayout
@@ -13,6 +14,31 @@
         android:elevation="4dp"
         android:orientation="vertical"
         android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edt_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:hint="@string/hint_notification_id"
+                android:inputType="number"
+                android:selectAllOnFocus="true" />
+
+            <EditText
+                android:id="@+id/edt_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:hint="@string/hint_notification_title" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/edt_text"

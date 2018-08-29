@@ -15,8 +15,11 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import info.ankurpandya.localnotificaion.demo.R;
+import info.ankurpandya.localnotificaion.demo.entities.MyNotification;
 
 public class CreateNotificationFragment extends Fragment {
+
+    private static final String ARG_NOTIFICATION = "ARG_NOTIFICATION";
 
     private OnFragmentInteractionListener mListener;
 
@@ -25,10 +28,14 @@ public class CreateNotificationFragment extends Fragment {
     private long delaySeconds = 0;
     //private long delay;
 
+    private EditText edt_id;
+    private EditText edt_title;
     private EditText edt_text;
     private CompoundButton toggle_repeat;
     private Button btn_time_picker;
     private Button btn_schedule;
+
+    private MyNotification myNotification;
 
     public CreateNotificationFragment() {
         // Required empty public constructor
@@ -39,15 +46,28 @@ public class CreateNotificationFragment extends Fragment {
         return fragment;
     }
 
+    public static CreateNotificationFragment newInstance(MyNotification myNotification) {
+        CreateNotificationFragment fragment = new CreateNotificationFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_NOTIFICATION, myNotification);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            myNotification = (MyNotification) getArguments().getSerializable(ARG_NOTIFICATION);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_create_notification, container, false);
+        edt_id = rootView.findViewById(R.id.edt_id);
+        edt_title = rootView.findViewById(R.id.edt_title);
         edt_text = rootView.findViewById(R.id.edt_text);
         toggle_repeat = rootView.findViewById(R.id.toggle_repeat);
         btn_time_picker = rootView.findViewById(R.id.btn_time_picker);
@@ -91,6 +111,22 @@ public class CreateNotificationFragment extends Fragment {
             }
         });
 
+        if (myNotification != null) {
+            edt_id.setText(myNotification.notificationId + "");
+//            edt_id.setFocusable(false);
+//            edt_id.setFocusableInTouchMode(false);
+//            edt_id.setClickable(false);
+
+            edt_title.setText(myNotification.textTitle);
+            edt_text.setText(myNotification.textContent);
+            toggle_repeat.setChecked(myNotification.isRepeat);
+        } else {
+            edt_id.setFocusable(true);
+            edt_id.setFocusableInTouchMode(true);
+            edt_id.setClickable(true);
+            edt_title.setText(R.string.app_name);
+        }
+
         updateDelayButtonText();
     }
 
@@ -101,7 +137,7 @@ public class CreateNotificationFragment extends Fragment {
         delay += delaySeconds * 1000L;
 
         mListener.createNotification(
-                0,
+                Integer.parseInt(edt_id.getText().toString()),
                 edt_text.getText().toString(),
                 delay,
                 toggle_repeat.isChecked()
@@ -113,7 +149,6 @@ public class CreateNotificationFragment extends Fragment {
     private void notifyNotificationCreated() {
         edt_text.setText("");
         mListener.hideKeyboard();
-        mListener.showToast(getString(R.string.msg_notification_schedule));
     }
 
     private void updateDelayButtonText() {
@@ -123,14 +158,24 @@ public class CreateNotificationFragment extends Fragment {
     }
 
     private boolean isValidData() {
-        if (
-                edt_text.getText() == null || edt_text.getText().toString().trim().length() == 0
-                ) {
+        if (!isValid(edt_id)) {
+            edt_id.setError(getString(R.string.msg_error_id_notification));
+            edt_id.requestFocus();
+            return false;
+        } else if (!isValid(edt_title)) {
+            edt_title.setError(getString(R.string.msg_error_title_notification));
+            edt_title.requestFocus();
+            return false;
+        } else if (!isValid(edt_text)) {
             edt_text.setError(getString(R.string.msg_error_txt_notification));
             edt_text.requestFocus();
             return false;
         }
         return true;
+    }
+
+    private boolean isValid(EditText text) {
+        return text.getText() != null && text.getText().toString().trim().length() > 0;
     }
 
     private static String millsToTimeStamp(long delayHours, long delayMinutes, long delaySeconds) {
@@ -177,5 +222,7 @@ public class CreateNotificationFragment extends Fragment {
         void showToast(String message);
 
         void hideKeyboard();
+
+        void cancelAllNotifications();
     }
 }
