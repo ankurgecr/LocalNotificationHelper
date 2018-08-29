@@ -3,20 +3,13 @@ package info.ankurpandya.localnotificaion.demo.utils;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
-
-import static android.content.Context.ALARM_SERVICE;
-
-import java.util.Calendar;
 
 import info.ankurpandya.localnotificaion.demo.receivers.MyNotificationPublisher;
 
@@ -91,7 +84,7 @@ public class NotificationHelper {
         //.setLargeIcon(((BitmapDrawable) mContext.getResources().getDrawable(largeIcon)).getBitmap())
         //.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
-        Intent intent = new Intent(mContext, MyNotificationPublisher.class);
+        Intent intent = new Intent(mContext, mCallerClass);
         PendingIntent activity = PendingIntent.getActivity(
                 mContext,
                 notificationId,
