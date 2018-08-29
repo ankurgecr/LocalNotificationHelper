@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">LocalNotificationDemo</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_schedule">Schedule</string>
+    <string name="msg_repeat_notification">Repeat notification</string>
+    <string name="hint_notification_text">Notification Text</string>
+    <string name="delay">Delay</string>
+    <string name="msg_error_txt_notification">Please enter some text to show in notification</string>
+    <string name="msg_error_txt_id">Please enter notification id to cancel</string>
+    <string name="msg_notification_schedule">Notification scheduled</string>
+    <string name="msg_notification_cancelled">Notification cancelled</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="hint_notification_id">Notification Id</string>
+</resources>
