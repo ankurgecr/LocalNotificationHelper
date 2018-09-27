@@ -4,6 +4,8 @@ LocalNotification Helper
 Getting started
 ---------------
 
+![Notification Components](https://ibb.co/nkuyrp)
+
 To get started with LocalNotification Helper, you'll need to get
 add the dependency to your project's build.gradle file:
 
