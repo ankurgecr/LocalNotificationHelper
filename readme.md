@@ -8,7 +8,10 @@ To get started with LocalNotification Helper, you'll need to get
 add the dependency to your project's build.gradle file:
 
 ```
-implementation "android.helper:localnotification:1.0.1"
+dependencies {
+    //other dependencies
+    implementation "android.helper:localnotification:1.0.1"
+}
 ```
 Then to sync up your project.
 
@@ -19,27 +22,27 @@ import android.NotificationHelper;
 and insert following code in your overridden methods:
 ```
 @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        NotificationHelper.init(
-                MainActivity.class,             /* You activity class */
-                this,                           /* Context */
-                getString(R.string.app_name),   /* Default title String you want to show */
-                R.drawable.app_icon             /* Default icon you want to show */
-        );
-        //...
-        //rest of the code
-        //...
-    }
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    NotificationHelper.init(
+            MainActivity.class,             /* You activity class */
+            this,                           /* Context */
+            getString(R.string.app_name),   /* Default title String you want to show */
+            R.drawable.app_icon             /* Default icon you want to show */
+    );
+    //...
+    //rest of the code
+    //...
+}
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        NotificationHelper.destroy();
-        //...
-        //rest of the code
-        //...
-    }
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    NotificationHelper.destroy();
+    //...
+    //rest of the code
+    //...
+}
 ```
 
 Good. Now you are all set to use LocalNotification Helper.
@@ -71,15 +74,15 @@ Create/Schedule or Edit/Reschedule notification
 In order to schedule a notification, call
 ```
 NotificationHelper.schedule(
-                idInt,
-                "",
-                smallIcon,
-                largeIcon,
-                titleString,
-                contentString,
-                delayInMillis,
-                repeatCountInt
-        );
+        idInt,
+        "",
+        smallIcon,
+        largeIcon,
+        titleString,
+        contentString,
+        delayInMillis,
+        repeatCountInt
+);
 ```
 If you will pass the 'id' of existing/already scheduled notification, it will override/reschedule the previous notification with new parameters.
 
