@@ -1,17 +1,16 @@
-package info.ankurpandya.localnotificaion.demo;
+package android;
 
 import android.app.NotificationChannel;
 import android.content.Context;
 import android.content.Intent;
+import android.helper.entities.AppDatabase;
+import android.helper.entities.LocalNotification;
+import android.helper.entities.NotificationDao;
+import android.helper.services.TriggerNotificationService;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 
 import java.util.List;
-
-import info.ankurpandya.localnotificaion.demo.entities.AppDatabase;
-import info.ankurpandya.localnotificaion.demo.entities.MyNotification;
-import info.ankurpandya.localnotificaion.demo.entities.NotificationDao;
-import info.ankurpandya.localnotificaion.demo.services.TriggerNotificationService;
 
 public class NotificationHelper {
 
@@ -74,7 +73,7 @@ public class NotificationHelper {
             channelId = NotificationChannel.DEFAULT_CHANNEL_ID;
         }
 
-        MyNotification notification = new MyNotification();
+        LocalNotification notification = new LocalNotification();
         notification.notificationId = notificationId;
         notification.channelId = channelId;
         notification.smallIcon = smallIcon;
@@ -90,7 +89,7 @@ public class NotificationHelper {
         notificationDao.save(notification);
     }
 
-    public static List<MyNotification> getAll() {
+    public static List<LocalNotification> getAll() {
         return notificationDao.getAll();
     }
 
@@ -98,7 +97,7 @@ public class NotificationHelper {
         notificationDao.delete(notificationId);
     }
 
-    public static void cancel(MyNotification notification) {
+    public static void cancel(LocalNotification notification) {
         notificationDao.delete(notification);
     }
 

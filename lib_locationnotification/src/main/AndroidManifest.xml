@@ -1,0 +1,18 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="android.helper">
+
+    <application>
+        <receiver
+            android:name=".receivers.AlarmBootReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".services.TriggerNotificationService"
+            android:enabled="true"
+            android:exported="true" />
+    </application>
+</manifest>

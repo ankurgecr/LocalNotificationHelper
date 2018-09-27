@@ -1,7 +1,9 @@
 package info.ankurpandya.localnotificaion.demo.activities;
 
+import android.NotificationHelper;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.helper.entities.LocalNotification;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,9 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import java.util.List;
 
-import info.ankurpandya.localnotificaion.demo.NotificationHelper;
 import info.ankurpandya.localnotificaion.demo.R;
-import info.ankurpandya.localnotificaion.demo.entities.MyNotification;
 import info.ankurpandya.localnotificaion.demo.fragments.CancelNotificationFragment;
 import info.ankurpandya.localnotificaion.demo.fragments.CreateNotificationFragment;
 import info.ankurpandya.localnotificaion.demo.fragments.NotificationListFragment;
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
                 commitAllowingStateLoss();
     }
 
-    void showCreateNotificationFragment(MyNotification notification) {
+    void showCreateNotificationFragment(LocalNotification notification) {
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.content, CreateNotificationFragment.newInstance(notification)).
                 addToBackStack(CreateNotificationFragment.class.getName()).
@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity
         showToast(getString(R.string.msg_all_notification_cancelled));
     }
 
-    private void cancelNotificationWithConfirmation(MyNotification notification, UpdateTaskHandler handler) {
+    private void cancelNotificationWithConfirmation(LocalNotification notification, UpdateTaskHandler handler) {
         NotificationHelper.cancel(notification);
         showToast(getString(R.string.msg_notification_cancelled));
         if (handler != null) {
@@ -283,12 +283,12 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public List<MyNotification> getAllNotifications() {
+    public List<LocalNotification> getAllNotifications() {
         return NotificationHelper.getAll();
     }
 
     @Override
-    public void onModifyNotificationRequested(MyNotification notification) {
+    public void onModifyNotificationRequested(LocalNotification notification) {
         showCreateNotificationFragment(notification);
     }
 
@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCancelNotificationRequested(final MyNotification notification, final UpdateTaskHandler handler) {
+    public void onCancelNotificationRequested(final LocalNotification notification, final UpdateTaskHandler handler) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

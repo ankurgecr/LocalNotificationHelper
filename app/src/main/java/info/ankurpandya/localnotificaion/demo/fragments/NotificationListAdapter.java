@@ -1,5 +1,6 @@
 package info.ankurpandya.localnotificaion.demo.fragments;
 
+import android.helper.entities.LocalNotification;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +13,14 @@ import java.util.List;
 
 import info.ankurpandya.localnotificaion.demo.R;
 import info.ankurpandya.localnotificaion.demo.activities.MainActivity;
-import info.ankurpandya.localnotificaion.demo.entities.MyNotification;
 import info.ankurpandya.localnotificaion.demo.fragments.NotificationListFragment.OnListFragmentInteractionListener;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
 
-    private final List<MyNotification> mValues;
+    private final List<LocalNotification> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public NotificationListAdapter(List<MyNotification> items, OnListFragmentInteractionListener listener) {
+    public NotificationListAdapter(List<LocalNotification> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -65,7 +65,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             btn_cancel = view.findViewById(R.id.btn_cancel);
         }
 
-        public void bind(final MyNotification notification) {
+        public void bind(final LocalNotification notification) {
             txt_id.setText(notification.notificationId + "");
             txt_title.setText(notification.textTitle);
             txt_content.setText(notification.textContent);

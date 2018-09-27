@@ -1,6 +1,7 @@
 package info.ankurpandya.localnotificaion.demo.fragments;
 
 import android.content.Context;
+import android.helper.entities.LocalNotification;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +16,6 @@ import java.util.List;
 
 import info.ankurpandya.localnotificaion.demo.R;
 import info.ankurpandya.localnotificaion.demo.activities.MainActivity;
-import info.ankurpandya.localnotificaion.demo.entities.MyNotification;
 
 /**
  * A fragment representing a list of Items.
@@ -26,7 +26,7 @@ import info.ankurpandya.localnotificaion.demo.entities.MyNotification;
 public class NotificationListFragment extends Fragment {
 
     private OnListFragmentInteractionListener mListener;
-    private List<MyNotification> allNotifications;
+    private List<LocalNotification> allNotifications;
     private View btn_add_new;
     private SwipeRefreshLayout listContainer;
     private RecyclerView list;
@@ -141,12 +141,12 @@ public class NotificationListFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        List<MyNotification> getAllNotifications();
+        List<LocalNotification> getAllNotifications();
 
         void onCreateNewNotificationRequested();
 
-        void onModifyNotificationRequested(MyNotification notification);
+        void onModifyNotificationRequested(LocalNotification notification);
 
-        void onCancelNotificationRequested(MyNotification notification, MainActivity.UpdateTaskHandler handler);
+        void onCancelNotificationRequested(LocalNotification notification, MainActivity.UpdateTaskHandler handler);
     }
 }

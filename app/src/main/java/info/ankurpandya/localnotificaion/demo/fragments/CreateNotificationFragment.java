@@ -2,6 +2,7 @@ package info.ankurpandya.localnotificaion.demo.fragments;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.helper.entities.LocalNotification;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import info.ankurpandya.localnotificaion.demo.R;
-import info.ankurpandya.localnotificaion.demo.entities.MyNotification;
 
 public class CreateNotificationFragment extends Fragment {
 
@@ -35,7 +35,7 @@ public class CreateNotificationFragment extends Fragment {
     private Button btn_time_picker;
     private Button btn_schedule;
 
-    private MyNotification myNotification;
+    private LocalNotification localNotification;
 
     public CreateNotificationFragment() {
         // Required empty public constructor
@@ -46,10 +46,10 @@ public class CreateNotificationFragment extends Fragment {
         return fragment;
     }
 
-    public static CreateNotificationFragment newInstance(MyNotification myNotification) {
+    public static CreateNotificationFragment newInstance(LocalNotification localNotification) {
         CreateNotificationFragment fragment = new CreateNotificationFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_NOTIFICATION, myNotification);
+        args.putSerializable(ARG_NOTIFICATION, localNotification);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,7 +58,7 @@ public class CreateNotificationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            myNotification = (MyNotification) getArguments().getSerializable(ARG_NOTIFICATION);
+            localNotification = (LocalNotification) getArguments().getSerializable(ARG_NOTIFICATION);
         }
     }
 
@@ -111,15 +111,15 @@ public class CreateNotificationFragment extends Fragment {
             }
         });
 
-        if (myNotification != null) {
-            edt_id.setText(myNotification.notificationId + "");
+        if (localNotification != null) {
+            edt_id.setText(localNotification.notificationId + "");
 //            edt_id.setFocusable(false);
 //            edt_id.setFocusableInTouchMode(false);
 //            edt_id.setClickable(false);
 
-            edt_title.setText(myNotification.textTitle);
-            edt_text.setText(myNotification.textContent);
-            toggle_repeat.setChecked(myNotification.isRepeat);
+            edt_title.setText(localNotification.textTitle);
+            edt_text.setText(localNotification.textContent);
+            toggle_repeat.setChecked(localNotification.isRepeat);
         } else {
             edt_id.setFocusable(true);
             edt_id.setFocusableInTouchMode(true);

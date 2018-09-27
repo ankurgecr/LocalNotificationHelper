@@ -1,4 +1,4 @@
-package info.ankurpandya.localnotificaion.demo.receivers;
+package android.helper.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

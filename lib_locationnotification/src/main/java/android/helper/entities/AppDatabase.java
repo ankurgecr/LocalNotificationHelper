@@ -1,4 +1,4 @@
-package info.ankurpandya.localnotificaion.demo.entities;
+package android.helper.entities;
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
@@ -7,7 +7,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
-@Database(entities = {MyNotification.class}, version = 1)
+@Database(entities = {LocalNotification.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
     static final Migration MIGRATION_0_1 = new Migration(0, 1) {

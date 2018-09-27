@@ -1,4 +1,4 @@
-package info.ankurpandya.localnotificaion.demo.entities;
+package android.helper.entities;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -8,7 +8,7 @@ import android.support.annotation.DrawableRes;
 import java.io.Serializable;
 
 @Entity
-public class MyNotification implements Serializable {
+public class LocalNotification implements Serializable {
 
     @PrimaryKey
     public int notificationId;
