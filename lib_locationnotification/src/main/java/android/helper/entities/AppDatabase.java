@@ -7,7 +7,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
-@Database(entities = {LocalNotification.class}, version = 1)
+@Database(entities = {LocalNotification.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     static final Migration MIGRATION_0_1 = new Migration(0, 1) {
