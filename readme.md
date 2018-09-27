@@ -5,13 +5,13 @@ Getting started
 ---------------
 
 To get started with LocalNotification Helper, you'll need to get
-add the dependency to your project build.gradle file:
+add the dependency to your project's build.gradle file:
 
-To initialise your local repository using the LineageOS trees, use a command like this:
 ```
 implementation "android.helper:localnotification:1.0.1"
 ```
 Then to sync up your project.
+
 Now Open your Main Activity java file
 ```
 import android.NotificationHelper;
@@ -42,17 +42,17 @@ and insert following code in your overridden methods:
     }
 ```
 
-Good. You are all set to use LocalNotification Helper now.
+Good. Now you are all set to use LocalNotification Helper.
 
 List of Notifications
 --------
 In order to get list of all notifications, call this method:
 
 ```
-NotificationHelper.getAll();
+List<LocalNotification> allNotifications = NotificationHelper.getAll();
 ```
 
-this will return list of LocalNotification objects. Here is the properties of LocalNotification class.
+Here are the properties of LocalNotification model.
 ```
 class LocalNotification {
     int notificationId;       /* Primary id of notification */
@@ -81,17 +81,18 @@ NotificationHelper.schedule(
                 repeatCountInt
         );
 ```
-If you will pass the 'id' of existing notification, it will override/reschedule the previous notification with new parameters.
+If you will pass the 'id' of existing/already scheduled notification, it will override/reschedule the previous notification with new parameters.
+
 Get notification status
 --------
-In order to check if a notification is scheduled or not, periodically
+In order to check if a notification is scheduled or not,
 ```
 boolean scheduled = NotificationHelper.isScheduled(notificationId)
 ```
 
 Cancel/Unschedule notification
 --------
-For cancellation of a notification, call
+For cancelling a notification, call
 ```
 NotificationHelper.cancel(notificationId);
 ```
@@ -101,7 +102,7 @@ LocalNotification myNotification = /**/;
 NotificationHelper.cancel(myNotification);
 ```
 
-For cancelling all the scheduled notifications, cancelling
+For cancelling all the scheduled notifications, call
 ```
 NotificationHelper.cancelAll();
 ```
