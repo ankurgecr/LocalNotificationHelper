@@ -44,6 +44,8 @@ and insert following code in your overridden methods:
 
 Good. You are all set to use LocalNotification Helper now.
 
+List of Notifications
+--------
 In order to get list of all notifications, call this method:
 
 ```
@@ -64,6 +66,8 @@ class LocalNotification {
     boolean isRepeat = false; /* true - if you want to repeat the same notification with fixed interval 'delay' */
 }
 ```
+Create/Schedule notification
+--------
 In order to schedule a notification, call
 ```
 NotificationHelper.schedule(
@@ -78,11 +82,15 @@ NotificationHelper.schedule(
         );
 ```
 
+Get notification status
+--------
 In order to check if a notification is scheduled or not, periodically
 ```
 boolean scheduled = NotificationHelper.isScheduled(notificationId)
 ```
 
+Cancel/Unschedule notification
+--------
 For cancellation of a notification, call
 ```
 NotificationHelper.cancel(notificationId);
