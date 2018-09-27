@@ -18,10 +18,10 @@ public interface NotificationDao {
     List<LocalNotification> loadTriggerable(long currentTime);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void save(LocalNotification mynotification);
+    void save(LocalNotification localNotification);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(LocalNotification... mynotifications);
+    void insertAll(LocalNotification... localNotifications);
 
     @Delete
     void delete(LocalNotification localNotification);

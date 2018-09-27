@@ -66,7 +66,7 @@ class LocalNotification {
     boolean isRepeat = false; /* true - if you want to repeat the same notification with fixed interval 'delay' */
 }
 ```
-Create/Schedule notification
+Create/Schedule or Edit/Reschedule notification
 --------
 In order to schedule a notification, call
 ```
@@ -81,7 +81,7 @@ NotificationHelper.schedule(
                 repeatCountInt
         );
 ```
-
+If you will pass the 'id' of existing notification, it will override/reschedule the previous notification with new parameters.
 Get notification status
 --------
 In order to check if a notification is scheduled or not, periodically
