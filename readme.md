@@ -12,7 +12,7 @@ add the dependency to your project's build.gradle file:
 ```
 dependencies {
     //other dependencies
-    implementation "android.helper:localnotification:1.0.1"
+    implementation "android.helper:localnotification:1.0.3"
 }
 ```
 Then to sync up your project.
@@ -27,8 +27,6 @@ and insert following code in your overridden methods:
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     NotificationHelper.init(
-            MainActivity.class,             /* You activity class */
-            this,                           /* Context */
             getString(R.string.app_name),   /* Default title String you want to show */
             R.drawable.app_icon             /* Default icon you want to show */
     );
@@ -37,14 +35,6 @@ protected void onCreate(Bundle savedInstanceState) {
     //...
 }
 
-@Override
-protected void onDestroy() {
-    super.onDestroy();
-    NotificationHelper.destroy();
-    //...
-    //rest of the code
-    //...
-}
 ```
 
 Good. Now you are all set to use LocalNotification Helper.
@@ -54,7 +44,12 @@ List of Notifications
 In order to get list of all notifications, call this method:
 
 ```
-List<LocalNotification> allNotifications = NotificationHelper.getAll();
+NotificationHelper.getAll(new LocalNotificationHandler() {
+     @Override
+     public void onNotificationReceived(List<LocalNotification> notifications) {
+         //..
+     }
+});
 ```
 
 Here are the properties of LocalNotification model.
@@ -65,7 +60,7 @@ class LocalNotification {
     String textTitle;         /* Title text on notification */
     String textContent;       /* Content text on notification */
     int smallIcon;            /* Small icon - Single color (Monochrome) png image with Transparency */
-    int largeIcon;            /* Large icon - Any icon image jpg/png */
+    int largeIcon;            /* Large icon - Any icon image jpeg/png */
     long delay;               /* Delay in milliseconds after notification will triggered */
     int repeatCount = -1;     /* Number of repeat for your notification, -1 for 'infinite' */
     boolean isRepeat = false; /* true - if you want to repeat the same notification with fixed interval 'delay' */
@@ -92,7 +87,16 @@ Get notification status
 --------
 In order to check if a notification is scheduled or not,
 ```
-boolean scheduled = NotificationHelper.isScheduled(notificationId)
+NotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandler() {
+   @Override
+   public void onNotificationStatusReceived(boolean scheduled) {
+       if (scheduled) {
+           //..
+       } else {
+           //..
+       }
+   }
+});
 ```
 
 Cancel/Unschedule notification
