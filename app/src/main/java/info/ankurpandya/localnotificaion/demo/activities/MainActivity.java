@@ -4,6 +4,8 @@ import android.NotificationHelper;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.helper.entities.LocalNotification;
+import android.helper.entities.NotificationCallback;
+import android.helper.entities.NotificationStatusCallback;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -18,8 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
-import java.util.List;
 
 import info.ankurpandya.localnotificaion.demo.R;
 import info.ankurpandya.localnotificaion.demo.fragments.CancelNotificationFragment;
@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity
         container = findViewById(R.id.container);
 
         NotificationHelper.init(
-                MainActivity.class,
-                this,
                 getString(R.string.app_name),
                 R.drawable.app_icon
         );
@@ -155,26 +153,31 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void createNotification(final int id, final String title, final String content, final long delay, final boolean repeat) {
-        if (NotificationHelper.isScheduled(id)) {
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case DialogInterface.BUTTON_POSITIVE:
-                            createNotificationWithConfirmation(id, title, content, delay, repeat);
-                            break;
-                    }
+        NotificationHelper.isScheduled(id, new NotificationStatusCallback() {
+            @Override
+            public void onNotificationStatusReceived(boolean scheduled) {
+                if (scheduled) {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    createNotificationWithConfirmation(id, title, content, delay, repeat);
+                                    break;
+                            }
+                        }
+                    };
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle(R.string.confirm_override_notification_title)
+                            .setMessage(R.string.confirm_override_notification_desc)
+                            .setPositiveButton(android.R.string.yes, dialogClickListener)
+                            .setNegativeButton(android.R.string.no, dialogClickListener)
+                            .show();
+                } else {
+                    createNotificationWithConfirmation(id, title, content, delay, repeat);
                 }
-            };
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.confirm_override_notification_title)
-                    .setMessage(R.string.confirm_override_notification_desc)
-                    .setPositiveButton(android.R.string.yes, dialogClickListener)
-                    .setNegativeButton(android.R.string.no, dialogClickListener)
-                    .show();
-        } else {
-            createNotificationWithConfirmation(id, title, content, delay, repeat);
-        }
+            }
+        });
     }
 
     private void createNotificationWithConfirmation(int id, String title, String content, long delay, boolean repeat) {
@@ -214,13 +217,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void cancelNotification(int notificationId) {
-        if (NotificationHelper.isScheduled(notificationId)) {
-            NotificationHelper.cancel(notificationId);
-            showToast(getString(R.string.msg_notification_cancelled));
-        } else {
-            showToast(getString(R.string.msg_notification_not_scheduled_id));
-        }
+    public void cancelNotification(final int notificationId) {
+        NotificationHelper.isScheduled(notificationId, new NotificationStatusCallback() {
+            @Override
+            public void onNotificationStatusReceived(boolean scheduled) {
+                if (scheduled) {
+                    NotificationHelper.cancel(notificationId);
+                    showToast(getString(R.string.msg_notification_cancelled));
+                } else {
+                    showToast(getString(R.string.msg_notification_not_scheduled_id));
+                }
+            }
+        });
     }
 
     public void refreshCurrentFragment() {
@@ -233,14 +241,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean isScheduled(int notificationId) {
-        return NotificationHelper.isScheduled(notificationId);
+    public void isScheduled(int notificationId, NotificationStatusCallback callback) {
+        NotificationHelper.isScheduled(notificationId, callback);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NotificationHelper.destroy();
+        //NotificationHelper.destroy();
     }
 
     @Override
@@ -252,7 +260,6 @@ public class MainActivity extends AppCompatActivity
                     case DialogInterface.BUTTON_POSITIVE:
                         cancelAllNotificationWithConfirmation();
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         //No button clicked
                         break;
@@ -281,10 +288,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
-    public List<LocalNotification> getAllNotifications() {
-        return NotificationHelper.getAll();
+    public void getAllNotifications(NotificationCallback callback) {
+        NotificationHelper.getAll(callback);
     }
 
     @Override

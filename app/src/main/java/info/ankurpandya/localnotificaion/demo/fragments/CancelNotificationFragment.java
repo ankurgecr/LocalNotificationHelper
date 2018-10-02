@@ -1,6 +1,7 @@
 package info.ankurpandya.localnotificaion.demo.fragments;
 
 import android.content.Context;
+import android.helper.entities.NotificationStatusCallback;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -113,7 +114,7 @@ public class CancelNotificationFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void cancelNotification(int notificationId);
 
-        boolean isScheduled(int notificationId);
+        void isScheduled(int notificationId, NotificationStatusCallback callback);
 
         void showToast(String message);
 

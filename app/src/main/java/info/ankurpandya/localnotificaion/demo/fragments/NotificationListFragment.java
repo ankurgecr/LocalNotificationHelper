@@ -2,6 +2,7 @@ package info.ankurpandya.localnotificaion.demo.fragments;
 
 import android.content.Context;
 import android.helper.entities.LocalNotification;
+import android.helper.entities.NotificationCallback;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import info.ankurpandya.localnotificaion.demo.R;
@@ -50,7 +52,7 @@ public class NotificationListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
-        allNotifications = mListener.getAllNotifications();
+        allNotifications = new ArrayList<>();
     }
 
     @Override
@@ -106,12 +108,17 @@ public class NotificationListFragment extends Fragment {
     public void refreshList() {
         showProgress();
         allNotifications.clear();
-        allNotifications.addAll(mListener.getAllNotifications());
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
-        updateEmptyView();
-        hideProgress();
+        mListener.getAllNotifications(new NotificationCallback() {
+            @Override
+            public void onNotificationReceived(List<LocalNotification> notifications) {
+                allNotifications.addAll(notifications);
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
+                updateEmptyView();
+                hideProgress();
+            }
+        });
     }
 
     private void updateEmptyView() {
@@ -141,7 +148,7 @@ public class NotificationListFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        List<LocalNotification> getAllNotifications();
+        void getAllNotifications(NotificationCallback callback);
 
         void onCreateNewNotificationRequested();
 
