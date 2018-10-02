@@ -1,5 +1,5 @@
 package android.helper.entities;
 
-public interface NotificationStatusCallback {
+public interface LocalNotificationStatusHandler {
     void onNotificationStatusReceived(boolean status);
 }

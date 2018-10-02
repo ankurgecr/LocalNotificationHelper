@@ -2,7 +2,7 @@ package info.ankurpandya.localnotificaion.demo.fragments;
 
 import android.content.Context;
 import android.helper.entities.LocalNotification;
-import android.helper.entities.NotificationCallback;
+import android.helper.entities.LocalNotificationHandler;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -108,7 +108,7 @@ public class NotificationListFragment extends Fragment {
     public void refreshList() {
         showProgress();
         allNotifications.clear();
-        mListener.getAllNotifications(new NotificationCallback() {
+        mListener.getAllNotifications(new LocalNotificationHandler() {
             @Override
             public void onNotificationReceived(List<LocalNotification> notifications) {
                 allNotifications.addAll(notifications);
@@ -148,7 +148,7 @@ public class NotificationListFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        void getAllNotifications(NotificationCallback callback);
+        void getAllNotifications(LocalNotificationHandler callback);
 
         void onCreateNewNotificationRequested();
 

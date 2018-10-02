@@ -2,6 +2,6 @@ package android.helper.entities;
 
 import java.util.List;
 
-public interface NotificationCallback {
+public interface LocalNotificationHandler {
     void onNotificationReceived(List<LocalNotification> notifications);
 }

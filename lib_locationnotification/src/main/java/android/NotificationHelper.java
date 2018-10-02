@@ -3,9 +3,9 @@ package android;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.helper.entities.LocalNotification;
-import android.helper.entities.NotificationCallback;
-import android.helper.entities.NotificationStatusCallback;
-import android.helper.services.TriggerNotificationWorker;
+import android.helper.entities.LocalNotificationHandler;
+import android.helper.entities.LocalNotificationStatusHandler;
+import android.helper.workers.TriggerNotificationWorker;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
@@ -117,7 +117,7 @@ public class NotificationHelper {
         mWorkManager.enqueue(request);
     }
 
-    public static void getAll(final NotificationCallback callback) {
+    public static void getAll(final LocalNotificationHandler callback) {
         String tag = TriggerNotificationWorker.class.getName();
         final LiveData<List<WorkStatus>> workStatusData = mWorkManager.getStatusesByTag(tag);
         workStatusData.observeForever(new Observer<List<WorkStatus>>() {
@@ -168,7 +168,7 @@ public class NotificationHelper {
 
     public static void isScheduled(
             int notificationId,
-            final NotificationStatusCallback callback
+            final LocalNotificationStatusHandler callback
     ) {
         final LiveData<List<WorkStatus>> workStatusData
                 = mWorkManager.getStatusesByTag(notificationId + "");

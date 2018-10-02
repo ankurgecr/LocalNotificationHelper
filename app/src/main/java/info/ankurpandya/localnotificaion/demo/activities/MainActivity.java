@@ -4,8 +4,8 @@ import android.NotificationHelper;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.helper.entities.LocalNotification;
-import android.helper.entities.NotificationCallback;
-import android.helper.entities.NotificationStatusCallback;
+import android.helper.entities.LocalNotificationHandler;
+import android.helper.entities.LocalNotificationStatusHandler;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void createNotification(final int id, final String title, final String content, final long delay, final boolean repeat) {
-        NotificationHelper.isScheduled(id, new NotificationStatusCallback() {
+        NotificationHelper.isScheduled(id, new LocalNotificationStatusHandler() {
             @Override
             public void onNotificationStatusReceived(boolean scheduled) {
                 if (scheduled) {
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void cancelNotification(final int notificationId) {
-        NotificationHelper.isScheduled(notificationId, new NotificationStatusCallback() {
+        NotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandler() {
             @Override
             public void onNotificationStatusReceived(boolean scheduled) {
                 if (scheduled) {
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void isScheduled(int notificationId, NotificationStatusCallback callback) {
+    public void isScheduled(int notificationId, LocalNotificationStatusHandler callback) {
         NotificationHelper.isScheduled(notificationId, callback);
     }
 
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void getAllNotifications(NotificationCallback callback) {
+    public void getAllNotifications(LocalNotificationHandler callback) {
         NotificationHelper.getAll(callback);
     }
 

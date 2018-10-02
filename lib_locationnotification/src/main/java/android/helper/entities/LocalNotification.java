@@ -1,16 +1,15 @@
 package android.helper.entities;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.DrawableRes;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-@Entity
 public class LocalNotification implements Serializable {
+
+    //////////////// gson stuff ///////////////
 
     private static Gson mGson;
 
@@ -36,36 +35,38 @@ public class LocalNotification implements Serializable {
         return mGson.toJson(this);
     }
 
-    @PrimaryKey
+    //////////////////////////////////////////////
+
+    @SerializedName("f")
     public int notificationId;
 
-    @ColumnInfo(name = "channelId")
+    @SerializedName("c")
     public String channelId;
 
-    @ColumnInfo(name = "textTitle")
+    @SerializedName("t")
     public String textTitle;
 
-    @ColumnInfo(name = "textContent")
+    @SerializedName("n")
     public String textContent;
 
-    @ColumnInfo(name = "smallIcon")
+    @SerializedName("s")
     @DrawableRes
     public int smallIcon;
 
-    @ColumnInfo(name = "largeIcon")
+    @SerializedName("l")
     @DrawableRes
     public int largeIcon;
 
-    @ColumnInfo(name = "triggerTime")
+    @SerializedName("m")
     public long triggerTime;
 
-    @ColumnInfo(name = "delay")
+    @SerializedName("d")
     public long delay;
 
-    @ColumnInfo(name = "repeatCount")
+    @SerializedName("r")
     public int repeatCount = -1;
 
-    @ColumnInfo(name = "isRepeat")
+    @SerializedName("i")
     public boolean isRepeat = false;
 
     @Override
