@@ -1,44 +1,48 @@
 package android;
 
-import android.app.NotificationChannel;
-import android.content.Context;
-import android.content.Intent;
-import android.helper.entities.AppDatabase;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.helper.entities.LocalNotification;
-import android.helper.entities.NotificationDao;
-import android.helper.services.TriggerNotificationService;
+import android.helper.entities.NotificationCallback;
+import android.helper.entities.NotificationStatusCallback;
+import android.helper.services.TriggerNotificationWorker;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.State;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
+import androidx.work.WorkStatus;
+
+//import android.helper.services.TriggerNotificationService;
 
 public class NotificationHelper {
 
-    private static Context mContext;
-    private static Class<?> mCallerClass;
-    private static AppDatabase appDatabase;
-    private static NotificationDao notificationDao;
+    private static final String TAG = "NotificationHelper";
 
     private static String mDefaultTitle;
     @DrawableRes
     private static int mDefaultIcon = -1;
 
+    private static WorkManager mWorkManager;
+
     public static void init(
-            Class<?> callerClass,
-            Context context,
             String defaultTitle,
             @DrawableRes int defaultIcon
     ) {
-        mContext = context;
-        mCallerClass = callerClass;
         mDefaultTitle = defaultTitle;
         mDefaultIcon = defaultIcon;
-
-        appDatabase = AppDatabase.getInstance(mContext);
-        notificationDao = appDatabase.notificationDao();
-
-        Intent intent = new Intent(context, TriggerNotificationService.class);
-        context.startService(intent);
+        LocalNotification.initGson();
+        mWorkManager = WorkManager.getInstance();
     }
 
     public static void schedule(
@@ -69,8 +73,9 @@ public class NotificationHelper {
             long delay,
             boolean isRepeat
     ) {
-        if (channelId == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channelId = NotificationChannel.DEFAULT_CHANNEL_ID;
+        cancel(notificationId);
+        if ((channelId == null || channelId.trim().length() == 0) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channelId = TAG;// NotificationChannel.DEFAULT_CHANNEL_ID;
         }
 
         LocalNotification notification = new LocalNotification();
@@ -83,37 +88,111 @@ public class NotificationHelper {
         notification.triggerTime = System.currentTimeMillis() + delay;
         notification.delay = delay;
         notification.isRepeat = isRepeat;
-
         //SystemClock.elapsedRealtime() - can use this here for accuracy
-
-        notificationDao.save(notification);
+        scheduleNotificationJob(notification);
     }
 
-    public static List<LocalNotification> getAll() {
-        return notificationDao.getAll();
+    private static void scheduleNotificationJob(LocalNotification notification) {
+        WorkRequest.Builder builder;
+        if (notification.isRepeat) {
+            builder = new PeriodicWorkRequest.Builder(
+                    TriggerNotificationWorker.class,
+                    notification.delay,
+                    TimeUnit.MILLISECONDS
+            );
+        } else {
+            builder = new OneTimeWorkRequest.Builder(
+                    TriggerNotificationWorker.class
+            );
+            ((OneTimeWorkRequest.Builder) builder).setInitialDelay(
+                    notification.delay,
+                    TimeUnit.MILLISECONDS
+            );
+        }
+        //builder.setInputData(createInputData(notification));
+        builder.addTag(notification.notificationId + "");
+        builder.addTag(TriggerNotificationWorker.TAG);
+        builder.addTag(notification.toTag());
+        WorkRequest request = builder.build();
+        mWorkManager.enqueue(request);
+    }
+
+    public static void getAll(final NotificationCallback callback) {
+        String tag = TriggerNotificationWorker.class.getName();
+        final LiveData<List<WorkStatus>> workStatusData = mWorkManager.getStatusesByTag(tag);
+        workStatusData.observeForever(new Observer<List<WorkStatus>>() {
+            @Override
+            public void onChanged(@Nullable List<WorkStatus> workStatuses) {
+                workStatusData.removeObserver(this);
+                List<LocalNotification> localNotifications = new ArrayList<>();
+                if (workStatuses != null && !workStatuses.isEmpty()) {
+                    for (WorkStatus status : workStatuses) {
+                        if (isStatusScheduled(status)) {
+                            for (String tag : status.getTags()) {
+                                try {
+                                    LocalNotification notification = new Gson().fromJson(
+                                            tag,
+                                            LocalNotification.class
+                                    );
+                                    if (notification != null) {
+                                        localNotifications.add(notification);
+                                    }
+                                } catch (Exception ignored) {
+
+                                }
+                            }
+                        }
+                    }
+                }
+                callback.onNotificationReceived(localNotifications);
+            }
+        });
+    }
+
+    private static boolean isStatusScheduled(WorkStatus status) {
+        return (status.getState() == State.ENQUEUED || status.getState() == State.BLOCKED);
     }
 
     public static void cancel(int notificationId) {
-        notificationDao.delete(notificationId);
+        //notificationDao.delete(notificationId);
+        mWorkManager.cancelAllWorkByTag(notificationId + "");
     }
 
     public static void cancel(LocalNotification notification) {
-        notificationDao.delete(notification);
+        cancel(notification.notificationId);
     }
 
     public static void cancelAll() {
-        notificationDao.deleteAll();
+        mWorkManager.cancelAllWork();
     }
 
-    public static boolean isScheduled(int notificationId) {
-        return notificationDao.isScheduled(notificationId);
+    public static void isScheduled(
+            int notificationId,
+            final NotificationStatusCallback callback
+    ) {
+        final LiveData<List<WorkStatus>> workStatusData
+                = mWorkManager.getStatusesByTag(notificationId + "");
+        workStatusData.observeForever(new Observer<List<WorkStatus>>() {
+            @Override
+            public void onChanged(@Nullable List<WorkStatus> workStatuses) {
+                workStatusData.removeObserver(this);
+                if (workStatuses != null && !workStatuses.isEmpty()) {
+                    WorkStatus status = workStatuses.get(0);
+                    if (isStatusScheduled(status)) {
+                        callback.onNotificationStatusReceived(true);
+                    } else {
+                        callback.onNotificationStatusReceived(false);
+                    }
+                } else {
+                    callback.onNotificationStatusReceived(false);
+                }
+            }
+        });
     }
 
+    @Deprecated
     public static void destroy() {
-        if (appDatabase != null && appDatabase.isOpen()) {
-            appDatabase.close();
-            appDatabase = null;
-        }
+        //not required any more
     }
 
 }
