@@ -34,7 +34,6 @@ public class NotificationListFragment extends Fragment {
     private RecyclerView list;
     private View empty;
 
-
     private NotificationListAdapter adapter;
 
     public NotificationListFragment() {
@@ -105,6 +104,12 @@ public class NotificationListFragment extends Fragment {
         refreshList();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     public void refreshList() {
         showProgress();
         allNotifications.clear();
@@ -139,12 +144,6 @@ public class NotificationListFragment extends Fragment {
         if (listContainer != null) {
             listContainer.setRefreshing(false);
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     public interface OnListFragmentInteractionListener {

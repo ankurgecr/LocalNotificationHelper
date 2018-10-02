@@ -21,7 +21,7 @@ Now Open your Main Activity java file
 ```
 import android.NotificationHelper;
 ```
-and insert following code in your overridden methods:
+and insert following code in your Application or Activity class
 ```
 @Override
 protected void onCreate(Bundle savedInstanceState) {

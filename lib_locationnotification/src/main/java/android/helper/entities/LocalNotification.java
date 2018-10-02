@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 public class LocalNotification implements Serializable {
 
-    //////////////// gson stuff ///////////////
+    //region: gson stuff
 
     private static Gson mGson;
 
@@ -35,7 +35,7 @@ public class LocalNotification implements Serializable {
         return mGson.toJson(this);
     }
 
-    //////////////////////////////////////////////
+    //endregion
 
     @SerializedName("f")
     public int notificationId;

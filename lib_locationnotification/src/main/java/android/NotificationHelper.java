@@ -23,8 +23,6 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 import androidx.work.WorkStatus;
 
-//import android.helper.services.TriggerNotificationService;
-
 public class NotificationHelper {
 
     private static final String TAG = "NotificationHelper";
@@ -32,9 +30,14 @@ public class NotificationHelper {
     private static String mDefaultTitle;
     @DrawableRes
     private static int mDefaultIcon = -1;
-
     private static WorkManager mWorkManager;
 
+    /**
+     * call this method in 'onCreate' of your Application or Activity class
+     *
+     * @param defaultTitle - Text you want to show by default on Title of Local Notification
+     * @param defaultIcon  - Icon you want to show by default with Local Notification
+     */
     public static void init(
             String defaultTitle,
             @DrawableRes int defaultIcon
@@ -45,6 +48,15 @@ public class NotificationHelper {
         mWorkManager = WorkManager.getInstance();
     }
 
+    /**
+     * Schedules a new local notification and overrides if the
+     * same notification is scheduled with same 'notificationId'
+     *
+     * @param notificationId - Unique int id of LocalNotification
+     * @param textContent    - Body text of your LocalNotification
+     * @param delay          - Delay time in millis after which your LocalNotification should be triggered
+     * @param isRepeat       - boolean to indicate if LocalNotification should repeat after 'delay' interval or not
+     */
     public static void schedule(
             int notificationId,
             String textContent,
@@ -63,6 +75,19 @@ public class NotificationHelper {
         );
     }
 
+    /**
+     * Schedules a new local notification and overrides if the
+     * same notification is scheduled with same 'notificationId'
+     *
+     * @param notificationId - Unique int id of LocalNotification
+     * @param channelId - Channel name on which you want to display your LocalNotification
+     * @param smallIcon - Small monochrome png icon drawable you want to show with your LocalNotification
+     * @param largeIcon - Colored icon image drawable you want to show with your LocalNotification
+     * @param textTitle - Title text of your LocalNotification
+     * @param textContent - Body text of your LocalNotification
+     * @param delay - Delay time in millis after which your LocalNotification should be triggered
+     * @param isRepeat - boolean to indicate if LocalNotification should repeat after 'delay' interval or not
+     */
     public static void schedule(
             int notificationId,
             String channelId,
@@ -92,31 +117,11 @@ public class NotificationHelper {
         scheduleNotificationJob(notification);
     }
 
-    private static void scheduleNotificationJob(LocalNotification notification) {
-        WorkRequest.Builder builder;
-        if (notification.isRepeat) {
-            builder = new PeriodicWorkRequest.Builder(
-                    TriggerNotificationWorker.class,
-                    notification.delay,
-                    TimeUnit.MILLISECONDS
-            );
-        } else {
-            builder = new OneTimeWorkRequest.Builder(
-                    TriggerNotificationWorker.class
-            );
-            ((OneTimeWorkRequest.Builder) builder).setInitialDelay(
-                    notification.delay,
-                    TimeUnit.MILLISECONDS
-            );
-        }
-        //builder.setInputData(createInputData(notification));
-        builder.addTag(notification.notificationId + "");
-        builder.addTag(TriggerNotificationWorker.TAG);
-        builder.addTag(notification.toTag());
-        WorkRequest request = builder.build();
-        mWorkManager.enqueue(request);
-    }
-
+    /**
+     * Returns the list of all LocalNotifications which
+     * are scheduled and going to trigger in future in
+     * @param callback - object of interface LocalNotificationHandler
+     */
     public static void getAll(final LocalNotificationHandler callback) {
         String tag = TriggerNotificationWorker.class.getName();
         final LiveData<List<WorkStatus>> workStatusData = mWorkManager.getStatusesByTag(tag);
@@ -149,23 +154,36 @@ public class NotificationHelper {
         });
     }
 
-    private static boolean isStatusScheduled(WorkStatus status) {
-        return (status.getState() == State.ENQUEUED || status.getState() == State.BLOCKED);
-    }
-
+    /**
+     * Cancels a notification with particular
+     * @param notificationId
+     */
     public static void cancel(int notificationId) {
         //notificationDao.delete(notificationId);
         mWorkManager.cancelAllWorkByTag(notificationId + "");
     }
 
+    /**
+     * Cancels the given
+     * @param notification
+     */
     public static void cancel(LocalNotification notification) {
         cancel(notification.notificationId);
     }
 
+    /**
+     * Cancels all the scheduled notifications
+     */
     public static void cancelAll() {
         mWorkManager.cancelAllWork();
     }
 
+    /**
+     * Returns the status of a notification scheduled on
+     * @param notificationId
+     * in a
+     * @param callback object of interface 'LocalNotificationStatusHandler'
+     */
     public static void isScheduled(
             int notificationId,
             final LocalNotificationStatusHandler callback
@@ -195,4 +213,34 @@ public class NotificationHelper {
         //not required any more
     }
 
+    //region: Private methods
+    private static void scheduleNotificationJob(LocalNotification notification) {
+        WorkRequest.Builder builder;
+        if (notification.isRepeat) {
+            builder = new PeriodicWorkRequest.Builder(
+                    TriggerNotificationWorker.class,
+                    notification.delay,
+                    TimeUnit.MILLISECONDS
+            );
+        } else {
+            builder = new OneTimeWorkRequest.Builder(
+                    TriggerNotificationWorker.class
+            );
+            ((OneTimeWorkRequest.Builder) builder).setInitialDelay(
+                    notification.delay,
+                    TimeUnit.MILLISECONDS
+            );
+        }
+        //builder.setInputData(createInputData(notification));
+        builder.addTag(notification.notificationId + "");
+        builder.addTag(TriggerNotificationWorker.TAG);
+        builder.addTag(notification.toTag());
+        WorkRequest request = builder.build();
+        mWorkManager.enqueue(request);
+    }
+
+    private static boolean isStatusScheduled(WorkStatus status) {
+        return (status.getState() == State.ENQUEUED || status.getState() == State.BLOCKED);
+    }
+    //endregion
 }
