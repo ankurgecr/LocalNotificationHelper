@@ -13,7 +13,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
-import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -34,7 +33,6 @@ public class TriggerNotificationWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Data data = getInputData();
         try {
             for (String tag : getTags()) {
                 LocalNotification notification = LocalNotification.fromTag(tag);

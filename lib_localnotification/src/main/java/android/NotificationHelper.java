@@ -44,7 +44,6 @@ public class NotificationHelper {
     ) {
         mDefaultTitle = defaultTitle;
         mDefaultIcon = defaultIcon;
-        LocalNotification.initGson();
         mWorkManager = WorkManager.getInstance();
     }
 
@@ -80,13 +79,13 @@ public class NotificationHelper {
      * same notification is scheduled with same 'notificationId'
      *
      * @param notificationId - Unique int id of LocalNotification
-     * @param channelId - Channel name on which you want to display your LocalNotification
-     * @param smallIcon - Small monochrome png icon drawable you want to show with your LocalNotification
-     * @param largeIcon - Colored icon image drawable you want to show with your LocalNotification
-     * @param textTitle - Title text of your LocalNotification
-     * @param textContent - Body text of your LocalNotification
-     * @param delay - Delay time in millis after which your LocalNotification should be triggered
-     * @param isRepeat - boolean to indicate if LocalNotification should repeat after 'delay' interval or not
+     * @param channelId      - Channel name on which you want to display your LocalNotification
+     * @param smallIcon      - Small monochrome png icon drawable you want to show with your LocalNotification
+     * @param largeIcon      - Colored icon image drawable you want to show with your LocalNotification
+     * @param textTitle      - Title text of your LocalNotification
+     * @param textContent    - Body text of your LocalNotification
+     * @param delay          - Delay time in millis after which your LocalNotification should be triggered
+     * @param isRepeat       - boolean to indicate if LocalNotification should repeat after 'delay' interval or not
      */
     public static void schedule(
             int notificationId,
@@ -98,6 +97,7 @@ public class NotificationHelper {
             long delay,
             boolean isRepeat
     ) {
+        checkWorkManager();
         cancel(notificationId);
         if ((channelId == null || channelId.trim().length() == 0) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             channelId = TAG;// NotificationChannel.DEFAULT_CHANNEL_ID;
@@ -120,9 +120,11 @@ public class NotificationHelper {
     /**
      * Returns the list of all LocalNotifications which
      * are scheduled and going to trigger in future in
+     *
      * @param callback - object of interface LocalNotificationHandler
      */
     public static void getAll(final LocalNotificationHandler callback) {
+        checkWorkManager();
         String tag = TriggerNotificationWorker.class.getName();
         final LiveData<List<WorkStatus>> workStatusData = mWorkManager.getStatusesByTag(tag);
         workStatusData.observeForever(new Observer<List<WorkStatus>>() {
@@ -156,15 +158,18 @@ public class NotificationHelper {
 
     /**
      * Cancels a notification with particular
+     *
      * @param notificationId
      */
     public static void cancel(int notificationId) {
+        checkWorkManager();
         //notificationDao.delete(notificationId);
         mWorkManager.cancelAllWorkByTag(notificationId + "");
     }
 
     /**
      * Cancels the given
+     *
      * @param notification
      */
     public static void cancel(LocalNotification notification) {
@@ -175,14 +180,15 @@ public class NotificationHelper {
      * Cancels all the scheduled notifications
      */
     public static void cancelAll() {
+        checkWorkManager();
         mWorkManager.cancelAllWork();
     }
 
     /**
      * Returns the status of a notification scheduled on
-     * @param notificationId
-     * in a
-     * @param callback object of interface 'LocalNotificationStatusHandler'
+     *
+     * @param notificationId in a
+     * @param callback       object of interface 'LocalNotificationStatusHandler'
      */
     public static void isScheduled(
             int notificationId,
@@ -241,6 +247,12 @@ public class NotificationHelper {
 
     private static boolean isStatusScheduled(WorkStatus status) {
         return (status.getState() == State.ENQUEUED || status.getState() == State.BLOCKED);
+    }
+
+    private static void checkWorkManager() {
+        if (mWorkManager == null) {
+            throw new RuntimeException("'NotificationHelper' not initialised. Please initialise notification helper from your Application or Activity class");
+        }
     }
     //endregion
 }
