@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.List;
+
 import info.ankurpandya.localnotificaion.demo.R;
 import info.ankurpandya.localnotificaion.demo.fragments.CancelNotificationFragment;
 import info.ankurpandya.localnotificaion.demo.fragments.CreateNotificationFragment;
@@ -289,8 +291,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void getAllNotifications(LocalNotificationHandler callback) {
-        NotificationHelper.getAll(callback);
+    public void getAllNotifications(final LocalNotificationHandler callback) {
+        //NotificationHelper.getAll(callback);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<LocalNotification> notificationList = NotificationHelper.getAllSync();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onNotificationReceived(notificationList);
+                    }
+                });
+            }
+        }).start();
     }
 
     @Override

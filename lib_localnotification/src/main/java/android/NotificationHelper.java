@@ -155,6 +155,40 @@ public class NotificationHelper {
         });
     }
 
+
+    /**
+     * Returns the list of all {@link LocalNotification}s which
+     * are scheduled and going to trigger in future in
+     *
+     * @return List<LocalNotification>
+     */
+    public static List<LocalNotification> getAllSync() {
+        checkWorkManager();
+        final List<WorkStatus> workStatuses
+                = mWorkManager.synchronous().getStatusesByTagSync(TriggerNotificationWorker.TAG);
+        List<LocalNotification> localNotifications = new ArrayList<>();
+        if (workStatuses != null && !workStatuses.isEmpty()) {
+            for (WorkStatus status : workStatuses) {
+                if (isStatusScheduled(status)) {
+                    for (String tag : status.getTags()) {
+                        try {
+                            LocalNotification notification = new Gson().fromJson(
+                                    tag,
+                                    LocalNotification.class
+                            );
+                            if (notification != null) {
+                                localNotifications.add(notification);
+                            }
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+                }
+            }
+        }
+        return localNotifications;
+    }
+
     /**
      * Cancels a notification with particular
      *
@@ -211,6 +245,26 @@ public class NotificationHelper {
                 }
             }
         });
+    }
+
+    /**
+     * Returns the status of a notification scheduled on
+     *
+     * @param notificationId in a
+     * @return boolean true of notification is scheduled
+     */
+    public static boolean isScheduledSync(
+            int notificationId
+    ) {
+        final List<WorkStatus> workStatuses
+                = mWorkManager.synchronous().getStatusesByTagSync(notificationId + "");
+        if (workStatuses != null && !workStatuses.isEmpty()) {
+            WorkStatus status = workStatuses.get(0);
+            if (isStatusScheduled(status)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Deprecated
