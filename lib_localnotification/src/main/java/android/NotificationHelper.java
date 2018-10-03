@@ -167,7 +167,7 @@ public class NotificationHelper {
         final List<WorkStatus> workStatuses
                 = mWorkManager.synchronous().getStatusesByTagSync(TriggerNotificationWorker.TAG);
         List<LocalNotification> localNotifications = new ArrayList<>();
-        if (workStatuses != null && !workStatuses.isEmpty()) {
+        if (!workStatuses.isEmpty()) {
             for (WorkStatus status : workStatuses) {
                 if (isStatusScheduled(status)) {
                     for (String tag : status.getTags()) {
@@ -258,7 +258,7 @@ public class NotificationHelper {
     ) {
         final List<WorkStatus> workStatuses
                 = mWorkManager.synchronous().getStatusesByTagSync(notificationId + "");
-        if (workStatuses != null && !workStatuses.isEmpty()) {
+        if (!workStatuses.isEmpty()) {
             WorkStatus status = workStatuses.get(0);
             if (isStatusScheduled(status)) {
                 return true;
