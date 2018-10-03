@@ -160,7 +160,7 @@ public class LocalNotificationHelper {
      * Returns the list of all {@link LocalNotification}s which
      * are scheduled and going to trigger in future in
      *
-     * @return List<LocalNotification>
+     * @return list of local notifications which are scheduled
      */
     public static List<LocalNotification> getAllSync() {
         checkWorkManager();
@@ -192,7 +192,7 @@ public class LocalNotificationHelper {
     /**
      * Cancels a notification with particular
      *
-     * @param notificationId
+     * @param notificationId of LocalNotification
      */
     public static void cancel(int notificationId) {
         checkWorkManager();
@@ -203,7 +203,7 @@ public class LocalNotificationHelper {
     /**
      * Cancels the given
      *
-     * @param notification
+     * @param notification to cancel
      */
     public static void cancel(LocalNotification notification) {
         cancel(notification.notificationId);
@@ -221,7 +221,7 @@ public class LocalNotificationHelper {
      * Returns the status of a notification scheduled on
      *
      * @param notificationId in a
-     * @param callback       object of interface '{@link LocalNotificationStatusHandler'}
+     * @param callback       object of interface {@link LocalNotificationStatusHandler}
      */
     public static void isScheduled(
             int notificationId,
