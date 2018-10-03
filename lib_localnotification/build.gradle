@@ -4,7 +4,7 @@ apply plugin: 'com.android.library'
 publish {
     def groupProjectID = 'android.helper'
     def artifactProjectID = 'localnotification'
-    def publishVersionID = '1.0.3'
+    def publishVersionID = '1.0.4'
 
     userOrg = 'ankurgecr'
     repoName = 'localnotification'
@@ -18,8 +18,8 @@ publish {
 android {
     compileSdkVersion 27
     defaultConfig {
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
     }
 
     buildTypes {
