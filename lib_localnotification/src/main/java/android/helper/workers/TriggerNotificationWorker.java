@@ -101,7 +101,9 @@ public class TriggerNotificationWorker extends Worker {
         );
 
         mBuilder.setContentIntent(contentIntent);
-        return mBuilder.build();
+        Notification androidNotification = mBuilder.build();
+        androidNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+        return androidNotification;
     }
 
     public static Intent getLauncherActivityIntent(Context context) {
