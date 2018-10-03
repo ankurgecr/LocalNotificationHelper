@@ -41,7 +41,7 @@ Good. Now you are all set to use LocalNotification Helper.
 
 List of Notifications
 --------
-In order to get list of all notifications, call this method:
+In order to get list of all notifications async, call this method:
 
 ```
 NotificationHelper.getAll(new LocalNotificationHandler() {
@@ -51,8 +51,29 @@ NotificationHelper.getAll(new LocalNotificationHandler() {
      }
 });
 ```
-
-Here are the properties of LocalNotification model.
+or for getting list of all notifications Sync, call this method:
+```
+List<LocalNotification> notificationList = NotificationHelper.getAllSync();
+```
+make sure you do not call this sync method from Activity's main thread. You call it like this:
+```
+void getAllNotificationsSync() {
+    new Thread(new Runnable() {
+        @Override
+        public void run() {
+            final List<LocalNotification> notificationList = NotificationHelper.getAllSync();
+            //.. do all Sync tasks here
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //.. this is main thread again, do all Async tasks here
+                }
+            });
+        }
+    }).start();
+}
+```
+Here are the properties of LocalNotification model:
 ```
 class LocalNotification {
     int notificationId;       /* Primary id of notification */
@@ -68,7 +89,7 @@ class LocalNotification {
 ```
 Create/Schedule or Edit/Reschedule notification
 --------
-In order to schedule a notification, call
+In order to schedule a notification, call:
 ```
 NotificationHelper.schedule(
         idInt,
@@ -85,7 +106,7 @@ If you will pass the 'id' of existing/already scheduled notification, it will ov
 
 Get notification status
 --------
-In order to check if a notification is scheduled or not,
+In order to check if a notification is scheduled or not, call:
 ```
 NotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandler() {
    @Override
@@ -98,6 +119,11 @@ NotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandle
    }
 });
 ```
+Or to check the same in Sync method,
+```
+boolean scheduled = NotificationHelper.isScheduledSync(notificationId);
+```
+again, do not call this Sync method from Main thread of your activity.
 
 Cancel/Unschedule notification
 --------
