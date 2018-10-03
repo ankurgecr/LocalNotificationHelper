@@ -3,12 +3,17 @@ package android.helper.workers;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.helper.entities.LocalNotification;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
+import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -29,6 +34,7 @@ public class TriggerNotificationWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        Data data = getInputData();
         try {
             for (String tag : getTags()) {
                 LocalNotification notification = LocalNotification.fromTag(tag);
@@ -91,6 +97,23 @@ public class TriggerNotificationWorker extends Worker {
                     ((BitmapDrawable) context.getResources().getDrawable(notification.largeIcon)).getBitmap()
             );
         }
+        Intent mainIntent = getLauncherActivityIntent(context);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        mBuilder.setContentIntent(contentIntent);
         return mBuilder.build();
+    }
+
+    public static Intent getLauncherActivityIntent(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+            intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        } else {
+            intent = new Intent(context, null);
+        }
+        return intent;
     }
 }
