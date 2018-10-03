@@ -1,6 +1,6 @@
 package info.ankurpandya.localnotificaion.demo.activities;
 
-import android.NotificationHelper;
+import android.LocalNotificationHelper;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.helper.entities.LocalNotification;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
 
         container = findViewById(R.id.container);
 
-        NotificationHelper.init(
+        LocalNotificationHelper.init(
                 getString(R.string.app_name),
                 R.drawable.app_icon
         );
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void createNotification(final int id, final String title, final String content, final long delay, final boolean repeat) {
-        NotificationHelper.isScheduled(id, new LocalNotificationStatusHandler() {
+        LocalNotificationHelper.isScheduled(id, new LocalNotificationStatusHandler() {
             @Override
             public void onNotificationStatusReceived(boolean scheduled) {
                 if (scheduled) {
@@ -183,11 +183,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createNotificationWithConfirmation(int id, String title, String content, long delay, boolean repeat) {
-        //NotificationHelper.schedule(id, content, delay, repeat);
+        //LocalNotificationHelper.schedule(id, content, delay, repeat);
         if (title == null) {
             title = getString(R.string.app_name);
         }
-        NotificationHelper.schedule(
+        LocalNotificationHelper.schedule(
                 id,
                 "",
                 R.drawable.ic_stat,
@@ -220,11 +220,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void cancelNotification(final int notificationId) {
-        NotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandler() {
+        LocalNotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandler() {
             @Override
             public void onNotificationStatusReceived(boolean scheduled) {
                 if (scheduled) {
-                    NotificationHelper.cancel(notificationId);
+                    LocalNotificationHelper.cancel(notificationId);
                     showToast(getString(R.string.msg_notification_cancelled));
                 } else {
                     showToast(getString(R.string.msg_notification_not_scheduled_id));
@@ -244,13 +244,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void isScheduled(int notificationId, LocalNotificationStatusHandler callback) {
-        NotificationHelper.isScheduled(notificationId, callback);
+        LocalNotificationHelper.isScheduled(notificationId, callback);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //NotificationHelper.destroy();
+        //LocalNotificationHelper.destroy();
     }
 
     @Override
@@ -278,12 +278,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void cancelAllNotificationWithConfirmation() {
-        NotificationHelper.cancelAll();
+        LocalNotificationHelper.cancelAll();
         showToast(getString(R.string.msg_all_notification_cancelled));
     }
 
     private void cancelNotificationWithConfirmation(LocalNotification notification, UpdateTaskHandler handler) {
-        NotificationHelper.cancel(notification);
+        LocalNotificationHelper.cancel(notification);
         showToast(getString(R.string.msg_notification_cancelled));
         if (handler != null) {
             handler.onItemUpdated();
@@ -292,11 +292,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void getAllNotifications(final LocalNotificationHandler callback) {
-        //NotificationHelper.getAll(callback);
+        //LocalNotificationHelper.getAll(callback);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final List<LocalNotification> notificationList = NotificationHelper.getAllSync();
+                final List<LocalNotification> notificationList = LocalNotificationHelper.getAllSync();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

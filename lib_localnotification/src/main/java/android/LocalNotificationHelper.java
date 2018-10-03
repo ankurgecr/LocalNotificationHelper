@@ -23,9 +23,9 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 import androidx.work.WorkStatus;
 
-public class NotificationHelper {
+public class LocalNotificationHelper {
 
-    private static final String TAG = "NotificationHelper";
+    private static final String TAG = "LocalNotificationHelper";
 
     private static String mDefaultTitle;
     @DrawableRes
@@ -304,7 +304,7 @@ public class NotificationHelper {
 
     private static void checkWorkManager() {
         if (mWorkManager == null) {
-            throw new RuntimeException("'NotificationHelper' not initialised. Please initialise notification helper from your Application or Activity class");
+            throw new RuntimeException("'LocalNotificationHelper' not initialised. Please initialise notification helper from your Application or Activity class");
         }
     }
     //endregion

@@ -1,4 +1,4 @@
-LocalNotification Helper
+Local Notification Helper
 ===========
 
 Getting started
@@ -6,7 +6,7 @@ Getting started
 
 ![Notification Components](https://image.ibb.co/crmpxU/android_local_notification.png)
 
-To get started with LocalNotification Helper, you'll need to get
+To get started with LocalNotificationHelper, you'll need to get
 add the dependency to your project's build.gradle file:
 
 ```
@@ -19,14 +19,14 @@ Then to sync up your project.
 
 Now Open your Main Activity java file
 ```
-import android.NotificationHelper;
+import android.LocalNotificationHelper;
 ```
 and insert following code in your Application or Activity class
 ```
 @Override
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    NotificationHelper.init(
+    LocalNotificationHelper.init(
             getString(R.string.app_name),   /* Default title String you want to show */
             R.drawable.app_icon             /* Default icon you want to show */
     );
@@ -44,7 +44,7 @@ List of Notifications
 In order to get list of all notifications async, call this method:
 
 ```
-NotificationHelper.getAll(new LocalNotificationHandler() {
+LocalNotificationHelper.getAll(new LocalNotificationHandler() {
      @Override
      public void onNotificationReceived(List<LocalNotification> notifications) {
          //..
@@ -53,7 +53,7 @@ NotificationHelper.getAll(new LocalNotificationHandler() {
 ```
 or for getting list of all notifications Sync, call this method:
 ```
-List<LocalNotification> notificationList = NotificationHelper.getAllSync();
+List<LocalNotification> notificationList = LocalNotificationHelper.getAllSync();
 ```
 make sure you do not call this sync method from Activity's main thread. You call it like this:
 ```
@@ -61,7 +61,7 @@ void getAllNotificationsSync() {
     new Thread(new Runnable() {
         @Override
         public void run() {
-            final List<LocalNotification> notificationList = NotificationHelper.getAllSync();
+            final List<LocalNotification> notificationList = LocalNotificationHelper.getAllSync();
             //.. do all Sync tasks here
             runOnUiThread(new Runnable() {
                 @Override
@@ -91,7 +91,7 @@ Create/Schedule or Edit/Reschedule notification
 --------
 In order to schedule a notification, call:
 ```
-NotificationHelper.schedule(
+LocalNotificationHelper.schedule(
         idInt,
         "",
         smallIcon,
@@ -108,7 +108,7 @@ Get notification status
 --------
 In order to check if a notification is scheduled or not, call:
 ```
-NotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandler() {
+LocalNotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandler() {
    @Override
    public void onNotificationStatusReceived(boolean scheduled) {
        if (scheduled) {
@@ -121,7 +121,7 @@ NotificationHelper.isScheduled(notificationId, new LocalNotificationStatusHandle
 ```
 Or to check the same in Sync method,
 ```
-boolean scheduled = NotificationHelper.isScheduledSync(notificationId);
+boolean scheduled = LocalNotificationHelper.isScheduledSync(notificationId);
 ```
 again, do not call this Sync method from Main thread of your activity.
 
@@ -129,17 +129,17 @@ Cancel/Unschedule notification
 --------
 For cancelling a notification, call
 ```
-NotificationHelper.cancel(notificationId);
+LocalNotificationHelper.cancel(notificationId);
 ```
 or
 ```
 LocalNotification myNotification = /**/;
-NotificationHelper.cancel(myNotification);
+LocalNotificationHelper.cancel(myNotification);
 ```
 
 For cancelling all the scheduled notifications, call
 ```
-NotificationHelper.cancelAll();
+LocalNotificationHelper.cancelAll();
 ```
 
 Demo
