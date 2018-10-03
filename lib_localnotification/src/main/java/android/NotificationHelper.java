@@ -51,10 +51,10 @@ public class NotificationHelper {
      * Schedules a new local notification and overrides if the
      * same notification is scheduled with same 'notificationId'
      *
-     * @param notificationId - Unique int id of LocalNotification
-     * @param textContent    - Body text of your LocalNotification
-     * @param delay          - Delay time in millis after which your LocalNotification should be triggered
-     * @param isRepeat       - boolean to indicate if LocalNotification should repeat after 'delay' interval or not
+     * @param notificationId - Unique int id of {@link LocalNotification}
+     * @param textContent    - Body text of your {@link LocalNotification}
+     * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
+     * @param isRepeat       - boolean to indicate if {@link LocalNotification} should repeat after 'delay' interval or not
      */
     public static void schedule(
             int notificationId,
@@ -78,14 +78,14 @@ public class NotificationHelper {
      * Schedules a new local notification and overrides if the
      * same notification is scheduled with same 'notificationId'
      *
-     * @param notificationId - Unique int id of LocalNotification
-     * @param channelId      - Channel name on which you want to display your LocalNotification
-     * @param smallIcon      - Small monochrome png icon drawable you want to show with your LocalNotification
-     * @param largeIcon      - Colored icon image drawable you want to show with your LocalNotification
-     * @param textTitle      - Title text of your LocalNotification
-     * @param textContent    - Body text of your LocalNotification
-     * @param delay          - Delay time in millis after which your LocalNotification should be triggered
-     * @param isRepeat       - boolean to indicate if LocalNotification should repeat after 'delay' interval or not
+     * @param notificationId - Unique int id of {@link LocalNotification}
+     * @param channelId      - Channel name on which you want to display your {@link LocalNotification}
+     * @param smallIcon      - Small monochrome png icon drawable you want to show with your {@link LocalNotification}
+     * @param largeIcon      - Colored icon image drawable you want to show with your {@link LocalNotification}
+     * @param textTitle      - Title text of your {@link LocalNotification}
+     * @param textContent    - Body text of your {@link LocalNotification}
+     * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
+     * @param isRepeat       - boolean to indicate if {@link LocalNotification} should repeat after 'delay' interval or not
      */
     public static void schedule(
             int notificationId,
@@ -118,15 +118,14 @@ public class NotificationHelper {
     }
 
     /**
-     * Returns the list of all LocalNotifications which
+     * Returns the list of all {@link LocalNotification}s which
      * are scheduled and going to trigger in future in
      *
-     * @param callback - object of interface LocalNotificationHandler
+     * @param callback - object of interface {@link LocalNotificationHandler}
      */
     public static void getAll(final LocalNotificationHandler callback) {
         checkWorkManager();
-        String tag = TriggerNotificationWorker.class.getName();
-        final LiveData<List<WorkStatus>> workStatusData = mWorkManager.getStatusesByTag(tag);
+        final LiveData<List<WorkStatus>> workStatusData = mWorkManager.getStatusesByTag(TriggerNotificationWorker.TAG);
         workStatusData.observeForever(new Observer<List<WorkStatus>>() {
             @Override
             public void onChanged(@Nullable List<WorkStatus> workStatuses) {
@@ -188,7 +187,7 @@ public class NotificationHelper {
      * Returns the status of a notification scheduled on
      *
      * @param notificationId in a
-     * @param callback       object of interface 'LocalNotificationStatusHandler'
+     * @param callback       object of interface '{@link LocalNotificationStatusHandler'}
      */
     public static void isScheduled(
             int notificationId,
