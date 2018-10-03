@@ -1,1 +1,1 @@
-include ':app', ':lib_locationnotification'
+include ':app', ':lib_localnotification'
