@@ -303,7 +303,7 @@ public class LocalNotificationHelper {
             builder.addTag(notification.toTag());
             mWorkManager.enqueueUniquePeriodicWork(
                     notification.notificationId + "",
-                    ExistingPeriodicWorkPolicy.KEEP,
+                    ExistingPeriodicWorkPolicy.REPLACE,
                     builder.build()
             );
         } else {

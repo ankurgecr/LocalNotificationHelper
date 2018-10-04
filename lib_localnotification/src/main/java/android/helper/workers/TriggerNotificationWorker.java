@@ -37,7 +37,9 @@ public class TriggerNotificationWorker extends Worker {
             for (String tag : getTags()) {
                 LocalNotification notification = LocalNotification.fromTag(tag);
                 if (notification != null) {
-                    triggerNotification(notification);
+                    if (System.currentTimeMillis() >= notification.triggerTime) {
+                        triggerNotification(notification);
+                    }
                 }
             }
             return Result.SUCCESS;
