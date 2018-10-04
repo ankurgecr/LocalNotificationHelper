@@ -12,7 +12,7 @@ add the dependency to your project's build.gradle file:
 ```
 dependencies {
     //other dependencies
-    implementation "android.helper:localnotification:1.0.7"
+    implementation "android.helper:localnotification:1.0.8"
 }
 ```
 Then to sync up your project.
