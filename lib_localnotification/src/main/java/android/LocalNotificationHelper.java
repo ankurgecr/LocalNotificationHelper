@@ -301,6 +301,7 @@ public class LocalNotificationHelper {
             );
             builder.addTag(TriggerNotificationWorker.TAG);
             builder.addTag(notification.toTag());
+            builder.addTag(notification.notificationId + "");
             mWorkManager.enqueueUniquePeriodicWork(
                     notification.notificationId + "",
                     ExistingPeriodicWorkPolicy.REPLACE,
