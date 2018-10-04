@@ -12,7 +12,7 @@ add the dependency to your project's build.gradle file:
 ```
 dependencies {
     //other dependencies
-    implementation "android.helper:localnotification:1.0.5"
+    implementation "android.helper:localnotification:1.0.7"
 }
 ```
 Then to sync up your project.
@@ -27,6 +27,7 @@ and insert following code in your Application or Activity class
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     LocalNotificationHelper.init(
+            context,                        /* Application or Activity context */
             getString(R.string.app_name),   /* Default title String you want to show */
             R.drawable.app_icon             /* Default icon you want to show */
     );
@@ -91,18 +92,31 @@ Create/Schedule or Edit/Reschedule notification
 --------
 In order to schedule a notification, call:
 ```
-LocalNotificationHelper.schedule(
-        idInt,
-        "",
-        smallIcon,
-        largeIcon,
-        titleString,
-        contentString,
-        delayInMillis,
-        repeatCountInt
+boolean result = LocalNotificationHelper.schedule(
+        intNotificationId,
+        stringContent,
+        longDelayInMillis,
+        booleanShouldRepeat
 );
 ```
-If you will pass the 'id' of existing/already scheduled notification, it will override/reschedule the previous notification with new parameters.
+or for more options call
+```
+boolean result = LocalNotificationHelper.schedule(
+        intNotificationId,
+        stringChannelName,
+        intResSmallIcon,
+        intResLargeIcon,
+        stringTitle,
+        stringContent,
+        longDelayInMillis,
+        booleanShouldRepeat
+);
+```
+result will be true if you notification is scheduled successfully.
+
+Note:
+- If you will pass the 'id' of existing/already scheduled notification, it will override/reschedule the previous notification with new parameters.
+- If you are scheduling a repeating notification, make sure you keep minimum 15 minutes of interval because of limitations of WorkManager
 
 Get notification status
 --------
