@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         container = findViewById(R.id.container);
 
         LocalNotificationHelper.init(
+                this,
                 getString(R.string.app_name),
                 R.drawable.app_icon
         );
@@ -183,11 +184,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createNotificationWithConfirmation(int id, String title, String content, long delay, boolean repeat) {
-        //LocalNotificationHelper.schedule(id, content, delay, repeat);
         if (title == null) {
             title = getString(R.string.app_name);
         }
-        LocalNotificationHelper.schedule(
+        boolean scheduled = LocalNotificationHelper.schedule(
                 id,
                 "",
                 R.drawable.ic_stat,
@@ -197,8 +197,10 @@ public class MainActivity extends AppCompatActivity
                 delay,
                 repeat
         );
-        showToast(getString(R.string.msg_notification_schedule));
-        showNotificationListFragment();
+        if (scheduled) {
+            showToast(getString(R.string.msg_notification_schedule));
+            showNotificationListFragment();
+        }
         //refreshCurrentFragment();
     }
 
@@ -215,7 +217,9 @@ public class MainActivity extends AppCompatActivity
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager)
                 getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(container.getWindowToken(), 0);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(container.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -292,6 +296,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void getAllNotifications(final LocalNotificationHandler callback) {
+        LocalNotificationHelper.getAll(callback);
+    }
+
+    public void getAllNotificationsSync(final LocalNotificationHandler callback) {
         //LocalNotificationHelper.getAll(callback);
         new Thread(new Runnable() {
             @Override

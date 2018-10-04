@@ -2,6 +2,7 @@ package android;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.helper.entities.LocalNotification;
 import android.helper.entities.LocalNotificationHandler;
 import android.helper.entities.LocalNotificationStatusHandler;
@@ -9,6 +10,7 @@ import android.helper.workers.TriggerNotificationWorker;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -16,17 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.State;
 import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 import androidx.work.WorkStatus;
 
 public class LocalNotificationHelper {
 
     private static final String TAG = "LocalNotificationHelper";
 
+    private static Context mContext;
     private static String mDefaultTitle;
     @DrawableRes
     private static int mDefaultIcon = -1;
@@ -35,13 +38,16 @@ public class LocalNotificationHelper {
     /**
      * call this method in 'onCreate' of your Application or Activity class
      *
+     * @param context      - Application or Activity context
      * @param defaultTitle - Text you want to show by default on Title of Local Notification
      * @param defaultIcon  - Icon you want to show by default with Local Notification
      */
     public static void init(
+            Context context,
             String defaultTitle,
             @DrawableRes int defaultIcon
     ) {
+        mContext = context;
         mDefaultTitle = defaultTitle;
         mDefaultIcon = defaultIcon;
         mWorkManager = WorkManager.getInstance();
@@ -55,14 +61,15 @@ public class LocalNotificationHelper {
      * @param textContent    - Body text of your {@link LocalNotification}
      * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
      * @param isRepeat       - boolean to indicate if {@link LocalNotification} should repeat after 'delay' interval or not
+     * @return true if notification scheduled successfully
      */
-    public static void schedule(
+    public static boolean schedule(
             int notificationId,
             String textContent,
             long delay,
             boolean isRepeat
     ) {
-        schedule(
+        return schedule(
                 notificationId,
                 null,
                 mDefaultIcon,
@@ -86,8 +93,9 @@ public class LocalNotificationHelper {
      * @param textContent    - Body text of your {@link LocalNotification}
      * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
      * @param isRepeat       - boolean to indicate if {@link LocalNotification} should repeat after 'delay' interval or not
+     * @return true if notification scheduled successfully
      */
-    public static void schedule(
+    public static boolean schedule(
             int notificationId,
             String channelId,
             @DrawableRes int smallIcon,
@@ -98,6 +106,16 @@ public class LocalNotificationHelper {
             boolean isRepeat
     ) {
         checkWorkManager();
+
+        if (isRepeat && delay < PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS) {
+            Toast.makeText(
+                    mContext,
+                    "Unable to schedule repeating notification with repeat time less then [" + PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS + "] millis",
+                    Toast.LENGTH_SHORT
+            ).show();
+            return false;
+        }
+
         cancel(notificationId);
         if ((channelId == null || channelId.trim().length() == 0) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             channelId = TAG;// NotificationChannel.DEFAULT_CHANNEL_ID;
@@ -115,6 +133,7 @@ public class LocalNotificationHelper {
         notification.isRepeat = isRepeat;
         //SystemClock.elapsedRealtime() - can use this here for accuracy
         scheduleNotificationJob(notification);
+        return true;
     }
 
     /**
@@ -274,28 +293,35 @@ public class LocalNotificationHelper {
 
     //region: Private methods
     private static void scheduleNotificationJob(LocalNotification notification) {
-        WorkRequest.Builder builder;
         if (notification.isRepeat) {
-            builder = new PeriodicWorkRequest.Builder(
+            PeriodicWorkRequest.Builder builder = new PeriodicWorkRequest.Builder(
                     TriggerNotificationWorker.class,
                     notification.delay,
                     TimeUnit.MILLISECONDS
             );
+            builder.addTag(TriggerNotificationWorker.TAG);
+            builder.addTag(notification.toTag());
+            mWorkManager.enqueueUniquePeriodicWork(
+                    notification.notificationId + "",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    builder.build()
+            );
         } else {
-            builder = new OneTimeWorkRequest.Builder(
+            OneTimeWorkRequest.Builder builder = new OneTimeWorkRequest.Builder(
                     TriggerNotificationWorker.class
             );
-            ((OneTimeWorkRequest.Builder) builder).setInitialDelay(
+            builder.addTag(TriggerNotificationWorker.TAG);
+            builder.addTag(notification.toTag());
+            builder.addTag(notification.notificationId + "");
+            builder.setInitialDelay(
                     notification.delay,
                     TimeUnit.MILLISECONDS
             );
+            mWorkManager.enqueue(
+                    builder.build()
+            );
         }
         //builder.setInputData(createInputData(notification));
-        builder.addTag(notification.notificationId + "");
-        builder.addTag(TriggerNotificationWorker.TAG);
-        builder.addTag(notification.toTag());
-        WorkRequest request = builder.build();
-        mWorkManager.enqueue(request);
     }
 
     private static boolean isStatusScheduled(WorkStatus status) {
