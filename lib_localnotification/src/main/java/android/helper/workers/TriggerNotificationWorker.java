@@ -87,6 +87,8 @@ public class TriggerNotificationWorker extends Worker {
     ) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, notification.channelId)
                 .setContentTitle(notification.textTitle)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(notification.textContent))
                 .setContentText(notification.textContent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         if (notification.smallIcon != -1) {
