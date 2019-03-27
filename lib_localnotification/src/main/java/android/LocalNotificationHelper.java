@@ -30,7 +30,13 @@ public class LocalNotificationHelper {
 
     private static String mDefaultTitle;
     @DrawableRes
-    private static int mDefaultIcon = -1;
+    private static int mDefaultSmallIcon = -1;
+    @DrawableRes
+    private static int mDefaultLargeIcon = -1;
+
+    private static boolean debugMode = false;
+
+    private static String defaultActionActivity = null;
 
     /**
      * call this method in 'onCreate' of your Application or Activity class
@@ -50,7 +56,7 @@ public class LocalNotificationHelper {
             @DrawableRes int defaultIcon
     ) {
         mDefaultTitle = defaultTitle;
-        mDefaultIcon = defaultIcon;
+        mDefaultSmallIcon = defaultIcon;
     }
 
     /**
@@ -70,29 +76,69 @@ public class LocalNotificationHelper {
     /**
      * @return default smallIcon for Notifications. If -1, it will show 'android.helper.R.drawable.lnh_ic_stat_default'
      */
-    public static int getDefaultIcon() {
-        return mDefaultIcon;
+    public static int getDefaultSmallIcon() {
+        return mDefaultSmallIcon;
+    }
+
+    /**
+     * @return default largeIcon for Notifications. If -1, it will show 'android.helper.R.drawable.lnh_ic_stat_default'
+     */
+    public static int getDefaultLargeIcon() {
+        return mDefaultLargeIcon;
     }
 
     /**
      * @param icon - default resource for Notifications smallIcon. If -1, it will show 'android.helper.R.drawable.lnh_ic_stat_default'
      */
-    public static void setDefaultIcon(int icon) {
-        LocalNotificationHelper.mDefaultIcon = icon;
+    public static void setDefaultSmallIcon(int icon) {
+        LocalNotificationHelper.mDefaultSmallIcon = icon;
+    }
+
+    /**
+     * @param icon - default resource for Notifications largeIcon. If -1, it will show 'android.helper.R.drawable.lnh_ic_stat_default'
+     */
+    public static void setDefaultLargeIcon(int icon) {
+        LocalNotificationHelper.mDefaultLargeIcon = icon;
+    }
+
+    public static boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public static void setDebugMode(boolean debugMode) {
+        LocalNotificationHelper.debugMode = debugMode;
+    }
+
+    /**
+     * @return path of activity to launch when notification is clicked. If NULL it opens Application's main launcher activity.
+     */
+    public static String getDefaultActionActivity() {
+        return defaultActionActivity;
+    }
+
+    /**
+     * @param defaultActionActivity -  Full path (with package name) of Activity to launch when notification is clicked.
+     *                              If NULL it opens Application's main lancher activity
+     */
+    public static void setDefaultActionActivity(String defaultActionActivity) {
+        LocalNotificationHelper.defaultActionActivity = defaultActionActivity;
     }
 
     /**
      * call this method in 'onCreate' of your Application or Activity class
      *
      * @param defaultTitle - Text you want to show by default on Title of Local Notification
-     * @param defaultIcon  - Icon you want to show by default with Local Notification
+     * @param smallIcon    - Small Icon you want to show by default with Local Notification
+     * @param largeIcon    - Large Icon you want to show by default with Local Notification
      */
     public static void init(
             String defaultTitle,
-            @DrawableRes int defaultIcon
+            @DrawableRes int smallIcon,
+            @DrawableRes int largeIcon
     ) {
         mDefaultTitle = defaultTitle;
-        mDefaultIcon = defaultIcon;
+        mDefaultSmallIcon = smallIcon;
+        mDefaultLargeIcon = largeIcon;
     }
 
     /**
@@ -118,10 +164,11 @@ public class LocalNotificationHelper {
         return schedule(
                 notificationId,
                 null,
-                mDefaultIcon,
-                mDefaultIcon,
+                mDefaultSmallIcon,
+                mDefaultLargeIcon,
                 mDefaultTitle,
                 textContent,
+                defaultActionActivity,
                 delay,
                 isRepeat ? delay : 0
         );
@@ -144,10 +191,11 @@ public class LocalNotificationHelper {
         return schedule(
                 notificationId,
                 null,
-                mDefaultIcon,
-                mDefaultIcon,
+                mDefaultSmallIcon,
+                mDefaultLargeIcon,
                 mDefaultTitle,
                 textContent,
+                defaultActionActivity,
                 delay,
                 0
         );
@@ -172,10 +220,11 @@ public class LocalNotificationHelper {
         return schedule(
                 notificationId,
                 null,
-                mDefaultIcon,
-                mDefaultIcon,
+                mDefaultSmallIcon,
+                mDefaultLargeIcon,
                 mDefaultTitle,
                 textContent,
+                defaultActionActivity,
                 triggerDelay,
                 repeatDelay
         );
@@ -242,6 +291,7 @@ public class LocalNotificationHelper {
      * @param largeIcon      - Colored icon image drawable you want to show with your {@link LocalNotification}
      * @param textTitle      - Title text of your {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
+     * @param actionActivity - Full path of Acitivity to launch when Notification clicked, null by default {@link LocalNotification}
      * @param triggerDelay   - Delay time in millis after which your {@link LocalNotification} should be triggered
      * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated, must be greater than or equals to 'PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS'
      * @return true if notification scheduled successfully
@@ -253,10 +303,11 @@ public class LocalNotificationHelper {
             @DrawableRes int largeIcon,
             String textTitle,
             String textContent,
+            String actionActivity,
             long triggerDelay,
             long repeatDelay
     ) {
-        if (repeatDelay > 0 && repeatDelay < PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS) {
+        if (!debugMode && repeatDelay > 0 && repeatDelay < PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS) {
             throw new IllegalArgumentException("Unable to schedule repeating notification with repeat time less then [" + PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS + "] millis");
         }
 
@@ -275,6 +326,7 @@ public class LocalNotificationHelper {
         notification.triggerTime = System.currentTimeMillis() + triggerDelay;
         notification.triggerDelay = triggerDelay;
         notification.repeatDelay = repeatDelay;
+        notification.activity = actionActivity;
         //SystemClock.elapsedRealtime() - can use this here for accuracy
         scheduleNotificationJob(notification);
         return true;

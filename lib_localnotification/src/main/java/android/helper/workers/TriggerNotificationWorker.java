@@ -119,7 +119,32 @@ public class TriggerNotificationWorker extends Worker {
                     ((BitmapDrawable) context.getResources().getDrawable(notification.largeIcon)).getBitmap()
             );
         }
-        Intent mainIntent = getLauncherActivityIntent(context);
+
+//        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        if(soundUri != null) {
+//            mBuilder.setSound(soundUri);
+//        }
+
+        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+        mBuilder.setAutoCancel(true);
+
+        Intent mainIntent = null;
+
+        boolean activityReserved = false;
+        if (!TextUtils.isEmpty(notification.activity)) {
+            try {
+                Class<?> c = Class.forName(notification.activity);
+                mainIntent = new Intent(context, c);
+                activityReserved = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!activityReserved) {
+            mainIntent = getLauncherActivityIntent(context);
+        }
+
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );

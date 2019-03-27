@@ -37,6 +37,9 @@ public class LocalNotification implements Serializable {
     @SerializedName("n")
     public String textContent;
 
+    @SerializedName("a")
+    public String activity;
+
     @SerializedName("s")
     @DrawableRes
     public int smallIcon;
