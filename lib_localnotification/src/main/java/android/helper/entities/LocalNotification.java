@@ -54,9 +54,6 @@ public class LocalNotification implements Serializable {
     @SerializedName("p")
     public long repeatDelay;
 
-    @SerializedName("r")
-    public int repeatCount = -1;
-
     @Override
     public boolean equals(Object obj) {
         try {

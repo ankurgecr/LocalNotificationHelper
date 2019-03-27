@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +35,9 @@ public class LocalNotificationHelper {
     /**
      * call this method in 'onCreate' of your Application or Activity class
      * <p>
-     * This method is Deprecated as Context is not required for upcoming versions
+     * This method is Deprecated as Context is not required for upcoming versions.
+     * No need to call init, by default App Name will be used as Notification Title
+     * and default drawable will be shown as Notification smallIcon
      *
      * @param context      - Application or Activity context
      * @param defaultTitle - Text you want to show by default on Title of Local Notification
@@ -48,6 +51,34 @@ public class LocalNotificationHelper {
     ) {
         mDefaultTitle = defaultTitle;
         mDefaultIcon = defaultIcon;
+    }
+
+    /**
+     * @return default title for Notifications. If NULL or BLANK, it will show Application name
+     */
+    public static String getDefaultTitle() {
+        return mDefaultTitle;
+    }
+
+    /**
+     * @param title - default text for Notifications title. If NULL or BLANK, it will show Application name
+     */
+    public static void setDefaultTitle(String title) {
+        LocalNotificationHelper.mDefaultTitle = title;
+    }
+
+    /**
+     * @return default smallIcon for Notifications. If -1, it will show {@link android.helper.R.drawable.lnh_ic_stat_default}
+     */
+    public static int getDefaultIcon() {
+        return mDefaultIcon;
+    }
+
+    /**
+     * @param icon - default resource for Notifications smallIcon. If -1, it will show {@link android.helper.R.drawable.lnh_ic_stat_default}
+     */
+    public static void setDefaultIcon(int icon) {
+        LocalNotificationHelper.mDefaultIcon = icon;
     }
 
     /**
@@ -145,6 +176,57 @@ public class LocalNotificationHelper {
                 mDefaultTitle,
                 textContent,
                 triggerDelay,
+                repeatDelay
+        );
+    }
+
+    /**
+     * Schedules a new One-Time local notification and overrides if the
+     * same notification is scheduled with same 'notificationId'
+     *
+     * @param notificationId - Unique int id of {@link LocalNotification}
+     * @param textContent    - Body text of your {@link LocalNotification}
+     * @param triggerTime    - Time on which your {@link LocalNotification} should be triggered
+     * @return true if notification scheduled successfully
+     */
+    public static boolean schedule(
+            int notificationId,
+            String textContent,
+            Date triggerTime
+    ) {
+        long delay = triggerTime.getTime() - System.currentTimeMillis();
+        if (delay < 0)
+            delay = 0;
+        return schedule(
+                notificationId,
+                textContent,
+                delay
+        );
+    }
+
+    /**
+     * Schedules a new local notification and overrides if the
+     * same notification is scheduled with same 'notificationId'
+     *
+     * @param notificationId - Unique int id of {@link LocalNotification}
+     * @param textContent    - Body text of your {@link LocalNotification}
+     * @param triggerTime    - Time on which your {@link LocalNotification} should be triggered
+     * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated
+     * @return true if notification scheduled successfully
+     */
+    public static boolean schedule(
+            int notificationId,
+            String textContent,
+            Date triggerTime,
+            long repeatDelay
+    ) {
+        long delay = triggerTime.getTime() - System.currentTimeMillis();
+        if (delay < 0)
+            delay = 0;
+        return schedule(
+                notificationId,
+                textContent,
+                delay,
                 repeatDelay
         );
     }
