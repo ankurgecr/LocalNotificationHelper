@@ -72,18 +72,34 @@ Create/Schedule or Edit/Reschedule notification
 In order to schedule a simple notification, call:
 ```
 boolean result = LocalNotificationHelper.schedule(
-        100,              //intNotificationId,
-        "This is a test", //stringContent,
+        100,              //intNotificationId
+        "This is a test", //stringContent
         10000L            //longTriggerDelayInMillis
 );
 ```
 or in order to schedule a repeating notification, call:
 ```
 boolean result = LocalNotificationHelper.schedule(
-        101,                        //intNotificationId,
-        "This is a repeating test", //stringContent,
-        10000L,             //longTriggerDelayInMillis
-        10000L             //longTriggerDelayInMillis
+        101,                        //intNotificationId
+        "This is a repeating test", //stringContent
+        10000L,                     //longTriggerDelayInMillis
+        10000L                      //longRepeatDelayInMillis
+);
+```
+or in order to schedule a notification with Date, call:
+```
+Calendar c = Calendar.getInstance();
+c.setTime(new Date());
+c.set(Calendar.HOUR, 8);
+c.set(Calendar.MINUTE, 30);
+c.set(Calendar.SECOND, 0);
+Date date = c.getTime(); // 8:30 AM of today's date
+
+boolean result = LocalNotificationHelper.schedule(
+        101,                        //intNotificationId
+        "This is a repeating test", //stringContent
+        date,                       //dateTriggerTime
+        10000L                      //longRepeatDelayInMillis
 );
 ```
 or for more options call
@@ -148,7 +164,7 @@ Technology
 --------
 LocalNotificationHelper library uses <a href="https://developer.android.com/topic/libraries/architecture/workmanager">WorkManager</a> internally. which is the best way to perform delayed task as per <a href="https://medium.com/@aleesha/the-amazing-workmanager-in-android-ba046b69295">this</a> and <a href="https://medium.com/mindorks/lets-work-manager-do-background-processing-58356e1ab844">this</a> articles comparing WorkManager with Job Schedulers, Services, Loaders and AlarmManager
 
-WorkManage using a WorkRequest for repeating work. This Work executes multiple times until it is cancelled, with the first execution happening immediately or as soon as the given Constraints are met. The next execution will happen during the period interval; note that execution may be delayed because WorkManager is subject to OS battery optimizations, such as doze mode.
+WorkManage uses a WorkRequest for repeating a Work. This Work executes multiple times until it is cancelled, with the first execution happening immediately or as soon as the given Constraints are met. The next execution will happen during the period interval; note that execution may be delayed because WorkManager is subject to OS battery optimizations, such as doze mode.
 
 Demo
 --------
