@@ -30,7 +30,6 @@ public class LocalNotificationHelper {
     private static String mDefaultTitle;
     @DrawableRes
     private static int mDefaultIcon = -1;
-    private static WorkManager mWorkManager;
 
     /**
      * call this method in 'onCreate' of your Application or Activity class
@@ -49,7 +48,6 @@ public class LocalNotificationHelper {
     ) {
         mDefaultTitle = defaultTitle;
         mDefaultIcon = defaultIcon;
-        mWorkManager = WorkManager.getInstance();
     }
 
     /**
@@ -64,7 +62,6 @@ public class LocalNotificationHelper {
     ) {
         mDefaultTitle = defaultTitle;
         mDefaultIcon = defaultIcon;
-        mWorkManager = WorkManager.getInstance();
     }
 
     /**
@@ -176,8 +173,6 @@ public class LocalNotificationHelper {
             long triggerDelay,
             long repeatDelay
     ) {
-        checkWorkManager();
-
         if (repeatDelay > 0 && repeatDelay < PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS) {
             throw new IllegalArgumentException("Unable to schedule repeating notification with repeat time less then [" + PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS + "] millis");
         }
@@ -209,8 +204,7 @@ public class LocalNotificationHelper {
      * @param callback - object of interface {@link LocalNotificationHandler}
      */
     public static void getAll(final LocalNotificationHandler callback) {
-        checkWorkManager();
-        final LiveData<List<WorkStatus>> workStatusData = mWorkManager.getStatusesByTag(TriggerNotificationWorker.TAG);
+        final LiveData<List<WorkStatus>> workStatusData = WorkManager.getInstance().getStatusesByTag(TriggerNotificationWorker.TAG);
         workStatusData.observeForever(new Observer<List<WorkStatus>>() {
             @Override
             public void onChanged(@Nullable List<WorkStatus> workStatuses) {
@@ -248,9 +242,8 @@ public class LocalNotificationHelper {
      * @return list of local notifications which are scheduled
      */
     public static List<LocalNotification> getAllSync() {
-        checkWorkManager();
         final List<WorkStatus> workStatuses
-                = mWorkManager.synchronous().getStatusesByTagSync(TriggerNotificationWorker.TAG);
+                = WorkManager.getInstance().synchronous().getStatusesByTagSync(TriggerNotificationWorker.TAG);
         List<LocalNotification> localNotifications = new ArrayList<>();
         if (!workStatuses.isEmpty()) {
             for (WorkStatus status : workStatuses) {
@@ -280,9 +273,7 @@ public class LocalNotificationHelper {
      * @param notificationId of LocalNotification
      */
     public static void cancel(int notificationId) {
-        checkWorkManager();
-        //notificationDao.delete(notificationId);
-        mWorkManager.cancelAllWorkByTag(notificationId + "");
+        WorkManager.getInstance().cancelAllWorkByTag(notificationId + "");
     }
 
     /**
@@ -298,8 +289,7 @@ public class LocalNotificationHelper {
      * Cancels all the scheduled notifications
      */
     public static void cancelAll() {
-        checkWorkManager();
-        mWorkManager.cancelAllWork();
+        WorkManager.getInstance().cancelAllWork();
     }
 
     /**
@@ -313,7 +303,7 @@ public class LocalNotificationHelper {
             final LocalNotificationStatusHandler callback
     ) {
         final LiveData<List<WorkStatus>> workStatusData
-                = mWorkManager.getStatusesByTag(notificationId + "");
+                = WorkManager.getInstance().getStatusesByTag(notificationId + "");
         workStatusData.observeForever(new Observer<List<WorkStatus>>() {
             @Override
             public void onChanged(@Nullable List<WorkStatus> workStatuses) {
@@ -342,7 +332,7 @@ public class LocalNotificationHelper {
             int notificationId
     ) {
         final List<WorkStatus> workStatuses
-                = mWorkManager.synchronous().getStatusesByTagSync(notificationId + "");
+                = WorkManager.getInstance().synchronous().getStatusesByTagSync(notificationId + "");
         if (!workStatuses.isEmpty()) {
             WorkStatus status = workStatuses.get(0);
             if (isStatusScheduled(status)) {
@@ -380,12 +370,6 @@ public class LocalNotificationHelper {
     //region: Private methods
     private static boolean isStatusScheduled(WorkStatus status) {
         return (status.getState() == State.ENQUEUED || status.getState() == State.BLOCKED);
-    }
-
-    private static void checkWorkManager() {
-        if (mWorkManager == null) {
-            throw new RuntimeException("'LocalNotificationHelper' not initialised. Please initialise notification helper from your Application or Activity class");
-        }
     }
     //endregion
 }
