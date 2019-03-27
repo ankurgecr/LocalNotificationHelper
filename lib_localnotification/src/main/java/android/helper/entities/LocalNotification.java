@@ -49,13 +49,13 @@ public class LocalNotification implements Serializable {
     public long triggerTime;
 
     @SerializedName("d")
-    public long delay;
+    public long triggerDelay;
+
+    @SerializedName("p")
+    public long repeatDelay;
 
     @SerializedName("r")
     public int repeatCount = -1;
-
-    @SerializedName("i")
-    public boolean isRepeat = false;
 
     @Override
     public boolean equals(Object obj) {

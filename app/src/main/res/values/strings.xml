@@ -31,4 +31,5 @@
     <string name="action_change">Change</string>
     <string name="txt_empty_notification_list">No notification scheduled. User + to schedule a notification now</string>
     <string name="msg_notification_not_scheduled_id">No notification scheduled on this id</string>
+    <string name="repeat">Repeat</string>
 </resources>

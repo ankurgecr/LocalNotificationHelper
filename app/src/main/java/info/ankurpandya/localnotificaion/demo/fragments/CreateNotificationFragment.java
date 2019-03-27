@@ -28,12 +28,20 @@ public class CreateNotificationFragment extends Fragment {
     private long delaySeconds = 0;
     //private long delay;
 
+    private long repeatHours = 0;
+    private long repeatMinutes = 0;
+    private long repeatSeconds = 0;
+    //private long delay;
+
     private EditText edt_id;
     private EditText edt_title;
     private EditText edt_text;
     private CompoundButton toggle_repeat;
     private Button btn_time_picker;
+    private Button btn_repeat_time_picker;
     private Button btn_schedule;
+
+    private View section_repeat;
 
     private LocalNotification localNotification;
 
@@ -70,7 +78,9 @@ public class CreateNotificationFragment extends Fragment {
         edt_title = rootView.findViewById(R.id.edt_title);
         edt_text = rootView.findViewById(R.id.edt_text);
         toggle_repeat = rootView.findViewById(R.id.toggle_repeat);
+        section_repeat = rootView.findViewById(R.id.section_repeat);
         btn_time_picker = rootView.findViewById(R.id.btn_time_picker);
+        btn_repeat_time_picker = rootView.findViewById(R.id.btn_repeat_time_picker);
         btn_schedule = rootView.findViewById(R.id.btn_schedule);
         return rootView;
     }
@@ -84,6 +94,13 @@ public class CreateNotificationFragment extends Fragment {
                 if (isValidData()) {
                     createNotification();
                 }
+            }
+        });
+
+        toggle_repeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                section_repeat.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             }
         });
 
@@ -111,6 +128,32 @@ public class CreateNotificationFragment extends Fragment {
             }
         });
 
+        btn_repeat_time_picker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int hour = 0;
+                int minute = 0;
+                TimePickerDialog dialog = new TimePickerDialog(
+                        getActivity(),
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                                //repeatHours = hour;
+                                //repeatMinutes = minute;
+                                repeatHours = hour;
+                                repeatMinutes = minute;
+                                repeatSeconds = 0;
+                                updateRepeatButtonText();
+                            }
+                        },
+                        hour,
+                        minute,
+                        true //DateFormat.is24HourFormat(getActivity())
+                );
+                dialog.show();
+            }
+        });
+
         if (localNotification != null) {
             edt_id.setText(localNotification.notificationId + "");
 //            edt_id.setFocusable(false);
@@ -119,7 +162,7 @@ public class CreateNotificationFragment extends Fragment {
 
             edt_title.setText(localNotification.textTitle);
             edt_text.setText(localNotification.textContent);
-            toggle_repeat.setChecked(localNotification.isRepeat);
+            toggle_repeat.setChecked(localNotification.repeatDelay > 0);
         } else {
             edt_id.setFocusable(true);
             edt_id.setFocusableInTouchMode(true);
@@ -131,17 +174,24 @@ public class CreateNotificationFragment extends Fragment {
     }
 
     private void createNotification() {
-        long delay = 0;
-        delay += delayHours * 60 * 60 * 1000L;
-        delay += delayMinutes * 60 * 1000L;
-        delay += delaySeconds * 1000L;
+        long triggerDelay = 0;
+        triggerDelay += delayHours * 60 * 60 * 1000L;
+        triggerDelay += delayMinutes * 60 * 1000L;
+        triggerDelay += delaySeconds * 1000L;
+        long repeatDelay = 0;
+
+        if (toggle_repeat.isChecked()) {
+            repeatDelay += repeatHours * 60 * 60 * 1000L;
+            repeatDelay += repeatMinutes * 60 * 1000L;
+            repeatDelay += repeatSeconds * 1000L;
+        }
 
         mListener.createNotification(
                 Integer.parseInt(edt_id.getText().toString()),
                 edt_title.getText().toString(),
                 edt_text.getText().toString(),
-                delay,
-                toggle_repeat.isChecked()
+                triggerDelay,
+                repeatDelay
         );
 
         notifyNotificationCreated();
@@ -155,6 +205,12 @@ public class CreateNotificationFragment extends Fragment {
     private void updateDelayButtonText() {
         btn_time_picker.setText(
                 millsToTimeStamp(delayHours, delayMinutes, delaySeconds)
+        );
+    }
+
+    private void updateRepeatButtonText() {
+        btn_repeat_time_picker.setText(
+                millsToTimeStamp(repeatHours, repeatMinutes, repeatSeconds)
         );
     }
 
@@ -218,7 +274,7 @@ public class CreateNotificationFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void createNotification(int id, String title, String content, long delay, boolean repeat);
+        void createNotification(int id, String title, String content, long triggerDelay, long repeatDelay);
 
         void showToast(String message);
 

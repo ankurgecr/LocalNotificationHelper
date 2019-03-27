@@ -73,6 +73,32 @@
                 android:text="0" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/section_repeat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:text="@string/repeat"
+                android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/btn_repeat_time_picker"
+                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:text="0" />
+        </LinearLayout>
+
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/toggle_repeat"
             style="@style/Base.Widget.AppCompat.CompoundButton.Switch"

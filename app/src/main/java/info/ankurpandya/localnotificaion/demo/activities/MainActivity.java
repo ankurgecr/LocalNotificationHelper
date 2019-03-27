@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void createNotification(final int id, final String title, final String content, final long delay, final boolean repeat) {
+    public void createNotification(final int id, final String title, final String content, final long triggerDelay, final long repeatDelay) {
         LocalNotificationHelper.isScheduled(id, new LocalNotificationStatusHandler() {
             @Override
             public void onNotificationStatusReceived(boolean scheduled) {
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    createNotificationWithConfirmation(id, title, content, delay, repeat);
+                                    createNotificationWithConfirmation(id, title, content, triggerDelay, repeatDelay);
                                     break;
                             }
                         }
@@ -177,13 +177,13 @@ public class MainActivity extends AppCompatActivity
                             .setNegativeButton(android.R.string.no, dialogClickListener)
                             .show();
                 } else {
-                    createNotificationWithConfirmation(id, title, content, delay, repeat);
+                    createNotificationWithConfirmation(id, title, content, triggerDelay, repeatDelay);
                 }
             }
         });
     }
 
-    private void createNotificationWithConfirmation(int id, String title, String content, long delay, boolean repeat) {
+    private void createNotificationWithConfirmation(int id, String title, String content, long triggerDelay, long repeatDelay) {
         if (title == null) {
             title = getString(R.string.app_name);
         }
@@ -194,8 +194,8 @@ public class MainActivity extends AppCompatActivity
                 R.drawable.app_icon,
                 title,
                 content,
-                delay,
-                repeat
+                triggerDelay,
+                10 * 1000L //repeatDelay
         );
         if (scheduled) {
             showToast(getString(R.string.msg_notification_schedule));

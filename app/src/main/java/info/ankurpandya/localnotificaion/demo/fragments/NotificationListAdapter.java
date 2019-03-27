@@ -70,7 +70,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             txt_title.setText(notification.textTitle);
             txt_content.setText(notification.textContent);
             txt_time.setText(formatNotificationDate(notification.triggerTime));
-            img_repeat.setVisibility(notification.isRepeat ? View.VISIBLE : View.INVISIBLE);
+            img_repeat.setVisibility(notification.repeatDelay > 0 ? View.VISIBLE : View.INVISIBLE);
             btn_change.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

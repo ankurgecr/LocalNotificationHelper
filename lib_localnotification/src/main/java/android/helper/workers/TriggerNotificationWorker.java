@@ -1,5 +1,6 @@
 package android.helper.workers;
 
+import android.LocalNotificationHelper;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -39,6 +40,16 @@ public class TriggerNotificationWorker extends Worker {
                 if (notification != null) {
                     if (System.currentTimeMillis() >= notification.triggerTime) {
                         triggerNotification(notification);
+                    }
+                    if (notification.repeatDelay > 0) {
+                        long missedTime = System.currentTimeMillis() - notification.triggerTime;
+                        while (missedTime > notification.repeatDelay) {
+                            missedTime -= notification.repeatDelay;
+                        }
+                        long newTriggerDelay = notification.repeatDelay - missedTime;
+                        notification.triggerDelay = newTriggerDelay;
+                        notification.triggerTime = System.currentTimeMillis() + newTriggerDelay;
+                        LocalNotificationHelper.scheduleNotificationJob(notification);
                     }
                 }
             }
