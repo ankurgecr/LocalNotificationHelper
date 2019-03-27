@@ -7,12 +7,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
+import android.helper.R;
 import android.helper.entities.LocalNotification;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -96,14 +99,20 @@ public class TriggerNotificationWorker extends Worker {
             Context context,
             LocalNotification notification
     ) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, notification.channelId)
-                .setContentTitle(notification.textTitle)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(notification.textContent))
-                .setContentText(notification.textContent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, notification.channelId);
+        if (!TextUtils.isEmpty(notification.textTitle)) {
+            mBuilder.setContentTitle(notification.textTitle);
+        } else {
+            mBuilder.setContentTitle(getDefaultAppName(context));
+        }
+        mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(notification.textContent));
+        mBuilder.setContentText(notification.textContent);
+        mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
         if (notification.smallIcon != -1) {
             mBuilder.setSmallIcon(notification.smallIcon);
+        } else {
+            mBuilder.setSmallIcon(R.drawable.lnh_ic_stat_default);
         }
         if (notification.largeIcon != -1) {
             mBuilder.setLargeIcon(
@@ -130,5 +139,15 @@ public class TriggerNotificationWorker extends Worker {
             intent = new Intent(context, null);
         }
         return intent;
+    }
+
+    private static CharSequence getDefaultAppName(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
+            ApplicationInfo applicationInfo = context.getApplicationInfo();
+            int stringId = applicationInfo.labelRes;
+            return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+        } else {
+            return "";
+        }
     }
 }
