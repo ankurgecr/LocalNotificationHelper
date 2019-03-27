@@ -12,31 +12,10 @@ add the dependency to your project's build.gradle file:
 ```
 dependencies {
     //other dependencies
-    implementation "android.helper:localnotification:1.0.8"
+    implementation "android.helper:localnotification:1.1.0"
 }
 ```
 Then to sync up your project.
-
-Now Open your Main Activity java file
-```
-import android.LocalNotificationHelper;
-```
-and insert following code in your Application or Activity class
-```
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    LocalNotificationHelper.init(
-            context,                        /* Application or Activity context */
-            getString(R.string.app_name),   /* Default title String you want to show */
-            R.drawable.app_icon             /* Default icon you want to show */
-    );
-    //...
-    //rest of the code
-    //...
-}
-
-```
 
 Good. Now you are all set to use LocalNotification Helper.
 
@@ -83,20 +62,28 @@ class LocalNotification {
     String textContent;       /* Content text on notification */
     int smallIcon;            /* Small icon - Single color (Monochrome) png image with Transparency */
     int largeIcon;            /* Large icon - Any icon image jpeg/png */
-    long delay;               /* Delay in milliseconds after notification will triggered */
-    int repeatCount = -1;     /* Number of repeat for your notification, -1 for 'infinite' */
-    boolean isRepeat = false; /* true - if you want to repeat the same notification with fixed interval 'delay' */
+    long triggerTime;          /* Time in milliseconds when notification is going to get triggered next time */
+    long triggerDelay;         /* Delay in milliseconds after notification will triggered */
+    long repeatDelay;          /* Delay in milliseconds after notification will repeated, 0 if not repeating */
 }
 ```
 Create/Schedule or Edit/Reschedule notification
 --------
-In order to schedule a notification, call:
+In order to schedule a simple notification, call:
 ```
 boolean result = LocalNotificationHelper.schedule(
         intNotificationId,
         stringContent,
-        longDelayInMillis,
-        booleanShouldRepeat
+        longTriggerDelayInMillis
+);
+```
+or in order to schedule a repeating notification, call:
+```
+boolean result = LocalNotificationHelper.schedule(
+        intNotificationId,
+        stringContent,
+        longTriggerDelayInMillis,
+        longRepeateDelayInMillis
 );
 ```
 or for more options call
@@ -108,7 +95,8 @@ boolean result = LocalNotificationHelper.schedule(
         intResLargeIcon,
         stringTitle,
         stringContent,
-        longDelayInMillis,
+        longTriggerDelayInMillis,
+        longRepeatDelayInMillis,
         booleanShouldRepeat
 );
 ```
@@ -155,6 +143,10 @@ For cancelling all the scheduled notifications, call
 ```
 LocalNotificationHelper.cancelAll();
 ```
+
+Technology
+--------
+LocalNotificationHelper library uses <a href="https://developer.android.com/topic/libraries/architecture/workmanager">WorkManager</a> internally. which is the best way to perform delayed task as per <a href="https://medium.com/@aleesha/the-amazing-workmanager-in-android-ba046b69295">this</a> and <a href="https://medium.com/mindorks/lets-work-manager-do-background-processing-58356e1ab844">this</a> articles comparing WorkManager with Job Schedulers, Services, Loaders and AlarmManager
 
 Demo
 --------

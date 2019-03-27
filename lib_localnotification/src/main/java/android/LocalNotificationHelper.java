@@ -68,14 +68,14 @@ public class LocalNotificationHelper {
     }
 
     /**
-     * @return default smallIcon for Notifications. If -1, it will show {@link android.helper.R.drawable.lnh_ic_stat_default}
+     * @return default smallIcon for Notifications. If -1, it will show 'android.helper.R.drawable.lnh_ic_stat_default'
      */
     public static int getDefaultIcon() {
         return mDefaultIcon;
     }
 
     /**
-     * @param icon - default resource for Notifications smallIcon. If -1, it will show {@link android.helper.R.drawable.lnh_ic_stat_default}
+     * @param icon - default resource for Notifications smallIcon. If -1, it will show 'android.helper.R.drawable.lnh_ic_stat_default'
      */
     public static void setDefaultIcon(int icon) {
         LocalNotificationHelper.mDefaultIcon = icon;
@@ -105,6 +105,7 @@ public class LocalNotificationHelper {
      * @param notificationId - Unique int id of {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
      * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
+     * @param isRepeat       - True if notification need to be repeated after given delay
      * @return true if notification scheduled successfully
      */
     @Deprecated
@@ -242,7 +243,7 @@ public class LocalNotificationHelper {
      * @param textTitle      - Title text of your {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
      * @param triggerDelay   - Delay time in millis after which your {@link LocalNotification} should be triggered
-     * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated, must be greater than or equats to {@Link PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS}
+     * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated, must be greater than or equals to 'PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS'
      * @return true if notification scheduled successfully
      */
     public static boolean schedule(
