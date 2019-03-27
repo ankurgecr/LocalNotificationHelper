@@ -43,12 +43,6 @@ public class MainActivity extends AppCompatActivity
 
         container = findViewById(R.id.container);
 
-        LocalNotificationHelper.init(
-                this,
-                getString(R.string.app_name),
-                R.drawable.app_icon
-        );
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -189,13 +183,9 @@ public class MainActivity extends AppCompatActivity
         }
         boolean scheduled = LocalNotificationHelper.schedule(
                 id,
-                "",
-                R.drawable.ic_stat,
-                R.drawable.app_icon,
-                title,
                 content,
                 triggerDelay,
-                10 * 1000L //repeatDelay
+                repeatDelay
         );
         if (scheduled) {
             showToast(getString(R.string.msg_notification_schedule));

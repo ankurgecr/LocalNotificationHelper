@@ -15,6 +15,8 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import com.ikovac.timepickerwithseconds.MyTimePickerDialog;
+
 import info.ankurpandya.localnotificaion.demo.R;
 
 public class CreateNotificationFragment extends Fragment {
@@ -132,24 +134,17 @@ public class CreateNotificationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 int hour = 0;
-                int minute = 0;
-                TimePickerDialog dialog = new TimePickerDialog(
-                        getActivity(),
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                                //repeatHours = hour;
-                                //repeatMinutes = minute;
-                                repeatHours = hour;
-                                repeatMinutes = minute;
-                                repeatSeconds = 0;
-                                updateRepeatButtonText();
-                            }
-                        },
-                        hour,
-                        minute,
-                        true //DateFormat.is24HourFormat(getActivity())
-                );
+                int minute = 15;
+                int seconds = 0;
+                MyTimePickerDialog dialog = new MyTimePickerDialog(getContext(), new MyTimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(com.ikovac.timepickerwithseconds.TimePicker view, int hourOfDay, int minute, int seconds) {
+                        repeatHours = hourOfDay;
+                        repeatMinutes = minute;
+                        repeatSeconds = seconds;
+                        updateRepeatButtonText();
+                    }
+                }, hour, minute, seconds, true);
                 dialog.show();
             }
         });
