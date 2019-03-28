@@ -86,7 +86,7 @@ public class TriggerNotificationWorker extends Worker {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             boolean isChannelCreated = isChannelCreated(channelId);
             if (notificationManager != null && !isChannelCreated) {
-                int importance = NotificationManager.IMPORTANCE_LOW;
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
                 NotificationChannel notificationChannel = new NotificationChannel(
                         channelId, channelId, importance
                 );
@@ -125,7 +125,7 @@ public class TriggerNotificationWorker extends Worker {
 //            mBuilder.setSound(soundUri);
 //        }
 
-        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setAutoCancel(true);
 
         Intent mainIntent = null;
@@ -143,6 +143,10 @@ public class TriggerNotificationWorker extends Worker {
 
         if (!activityReserved) {
             mainIntent = getLauncherActivityIntent(context);
+        }
+
+        if (!TextUtils.isEmpty(notification.data)) {
+            mainIntent.putExtra(LocalNotificationHelper.KEY_DATA, notification.data);
         }
 
         PendingIntent contentIntent = PendingIntent.getActivity(

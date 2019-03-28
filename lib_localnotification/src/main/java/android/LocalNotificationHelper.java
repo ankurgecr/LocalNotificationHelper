@@ -28,6 +28,8 @@ public class LocalNotificationHelper {
 
     private static final String TAG = "LocalNotificationHelper";
 
+    public static final String KEY_DATA = "LNH_DATA";
+
     private static String mDefaultTitle;
     @DrawableRes
     private static int mDefaultSmallIcon = -1;
@@ -150,6 +152,7 @@ public class LocalNotificationHelper {
      *
      * @param notificationId - Unique int id of {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
+     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
      * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
      * @param isRepeat       - True if notification need to be repeated after given delay
      * @return true if notification scheduled successfully
@@ -158,6 +161,7 @@ public class LocalNotificationHelper {
     public static boolean schedule(
             int notificationId,
             String textContent,
+            String data,
             long delay,
             boolean isRepeat
     ) {
@@ -169,6 +173,7 @@ public class LocalNotificationHelper {
                 mDefaultTitle,
                 textContent,
                 defaultActionActivity,
+                data,
                 delay,
                 isRepeat ? delay : 0
         );
@@ -180,12 +185,14 @@ public class LocalNotificationHelper {
      *
      * @param notificationId - Unique int id of {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
+     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
      * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
      * @return true if notification scheduled successfully
      */
     public static boolean schedule(
             int notificationId,
             String textContent,
+            String data,
             long delay
     ) {
         return schedule(
@@ -196,6 +203,7 @@ public class LocalNotificationHelper {
                 mDefaultTitle,
                 textContent,
                 defaultActionActivity,
+                data,
                 delay,
                 0
         );
@@ -207,6 +215,7 @@ public class LocalNotificationHelper {
      *
      * @param notificationId - Unique int id of {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
+     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
      * @param triggerDelay   - Delay time in millis after which your {@link LocalNotification} should be triggered
      * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated
      * @return true if notification scheduled successfully
@@ -214,6 +223,7 @@ public class LocalNotificationHelper {
     public static boolean schedule(
             int notificationId,
             String textContent,
+            String data,
             long triggerDelay,
             long repeatDelay
     ) {
@@ -225,6 +235,7 @@ public class LocalNotificationHelper {
                 mDefaultTitle,
                 textContent,
                 defaultActionActivity,
+                data,
                 triggerDelay,
                 repeatDelay
         );
@@ -236,12 +247,14 @@ public class LocalNotificationHelper {
      *
      * @param notificationId - Unique int id of {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
+     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
      * @param triggerTime    - Time on which your {@link LocalNotification} should be triggered
      * @return true if notification scheduled successfully
      */
     public static boolean schedule(
             int notificationId,
             String textContent,
+            String data,
             Date triggerTime
     ) {
         long delay = triggerTime.getTime() - System.currentTimeMillis();
@@ -250,6 +263,7 @@ public class LocalNotificationHelper {
         return schedule(
                 notificationId,
                 textContent,
+                data,
                 delay
         );
     }
@@ -260,6 +274,7 @@ public class LocalNotificationHelper {
      *
      * @param notificationId - Unique int id of {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
+     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
      * @param triggerTime    - Time on which your {@link LocalNotification} should be triggered
      * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated
      * @return true if notification scheduled successfully
@@ -267,6 +282,7 @@ public class LocalNotificationHelper {
     public static boolean schedule(
             int notificationId,
             String textContent,
+            String data,
             Date triggerTime,
             long repeatDelay
     ) {
@@ -276,6 +292,7 @@ public class LocalNotificationHelper {
         return schedule(
                 notificationId,
                 textContent,
+                data,
                 delay,
                 repeatDelay
         );
@@ -292,6 +309,7 @@ public class LocalNotificationHelper {
      * @param textTitle      - Title text of your {@link LocalNotification}
      * @param textContent    - Body text of your {@link LocalNotification}
      * @param actionActivity - Full path of Acitivity to launch when Notification clicked, null by default {@link LocalNotification}
+     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
      * @param triggerDelay   - Delay time in millis after which your {@link LocalNotification} should be triggered
      * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated, must be greater than or equals to 'PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS'
      * @return true if notification scheduled successfully
@@ -304,6 +322,7 @@ public class LocalNotificationHelper {
             String textTitle,
             String textContent,
             String actionActivity,
+            String data,
             long triggerDelay,
             long repeatDelay
     ) {
@@ -327,6 +346,7 @@ public class LocalNotificationHelper {
         notification.triggerDelay = triggerDelay;
         notification.repeatDelay = repeatDelay;
         notification.activity = actionActivity;
+        notification.data = data;
         //SystemClock.elapsedRealtime() - can use this here for accuracy
         scheduleNotificationJob(notification);
         return true;
