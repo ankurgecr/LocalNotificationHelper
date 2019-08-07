@@ -15,15 +15,15 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
-import com.ikovac.timepickerwithseconds.MyTimePickerDialog;
-
 import info.ankurpandya.localnotificaion.demo.R;
+import info.ankurpandya.localnotificaion.demo.utils.ToastHelper;
 
 public class CreateNotificationFragment extends Fragment {
 
     private static final String ARG_NOTIFICATION = "ARG_NOTIFICATION";
 
     private OnFragmentInteractionListener mListener;
+    private ToastHelper toastHelper;
 
     private long delayHours = 0;
     private long delayMinutes = 0;
@@ -133,19 +133,19 @@ public class CreateNotificationFragment extends Fragment {
         btn_repeat_time_picker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int hour = 0;
-                int minute = 15;
-                int seconds = 0;
-                MyTimePickerDialog dialog = new MyTimePickerDialog(getContext(), new MyTimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(com.ikovac.timepickerwithseconds.TimePicker view, int hourOfDay, int minute, int seconds) {
-                        repeatHours = hourOfDay;
-                        repeatMinutes = minute;
-                        repeatSeconds = seconds;
-                        updateRepeatButtonText();
-                    }
-                }, hour, minute, seconds, true);
-                dialog.show();
+//                int hour = 0;
+//                int minute = 15;
+//                int seconds = 0;
+//                MyTimePickerDialog dialog = new MyTimePickerDialog(getContext(), new MyTimePickerDialog.OnTimeSetListener() {
+//                    @Override
+//                    public void onTimeSet(com.ikovac.timepickerwithseconds.TimePicker view, int hourOfDay, int minute, int seconds) {
+//                        repeatHours = hourOfDay;
+//                        repeatMinutes = minute;
+//                        repeatSeconds = seconds;
+//                        updateRepeatButtonText();
+//                    }
+//                }, hour, minute, seconds, true);
+//                dialog.show();
             }
         });
 
@@ -260,6 +260,12 @@ public class CreateNotificationFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        if (context instanceof ToastHelper) {
+            toastHelper = (ToastHelper) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement ToastHelper");
+        }
     }
 
     @Override
@@ -270,8 +276,6 @@ public class CreateNotificationFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void createNotification(int id, String title, String content, long triggerDelay, long repeatDelay);
-
-        void showToast(String message);
 
         void hideKeyboard();
 

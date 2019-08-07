@@ -18,6 +18,7 @@ import java.util.List;
 
 import info.ankurpandya.localnotificaion.demo.R;
 import info.ankurpandya.localnotificaion.demo.activities.MainActivity;
+import info.ankurpandya.localnotificaion.demo.adapters.NotificationListAdapter;
 
 /**
  * A fragment representing a list of Items.

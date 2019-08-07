@@ -9,6 +9,54 @@
     tools:context=".activities.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <fragment
+                android:id="@+id/fragment_quick_notification"
+                android:name="info.ankurpandya.localnotificaion.demo.fragments.scheduling.QuickNotificationFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp" />
+
+            <fragment
+                android:id="@+id/fragment_delay_notification"
+                android:name="info.ankurpandya.localnotificaion.demo.fragments.scheduling.DelayNotificationFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp" />
+
+            <fragment
+                android:id="@+id/fragment_delay_repeat_notification"
+                android:name="info.ankurpandya.localnotificaion.demo.fragments.scheduling.DelayRepeatNotificationFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp" />
+
+            <fragment
+                android:id="@+id/fragment_time_notification"
+                android:name="info.ankurpandya.localnotificaion.demo.fragments.scheduling.TimeNotificationFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp" />
+
+            <fragment
+                android:id="@+id/fragment_time_repeat_notification"
+                android:name="info.ankurpandya.localnotificaion.demo.fragments.scheduling.TimeRepeatNotificationFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"

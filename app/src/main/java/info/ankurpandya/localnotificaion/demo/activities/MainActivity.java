@@ -3,6 +3,7 @@ package info.ankurpandya.localnotificaion.demo.activities;
 import android.LocalNotificationHelper;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.helper.entities.LocalNotification;
 import android.helper.entities.LocalNotificationHandler;
 import android.helper.entities.LocalNotificationStatusHandler;
@@ -27,12 +28,14 @@ import info.ankurpandya.localnotificaion.demo.R;
 import info.ankurpandya.localnotificaion.demo.fragments.CancelNotificationFragment;
 import info.ankurpandya.localnotificaion.demo.fragments.CreateNotificationFragment;
 import info.ankurpandya.localnotificaion.demo.fragments.NotificationListFragment;
+import info.ankurpandya.localnotificaion.demo.utils.ToastHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         CreateNotificationFragment.OnFragmentInteractionListener,
         CancelNotificationFragment.OnFragmentInteractionListener,
-        NotificationListFragment.OnListFragmentInteractionListener {
+        NotificationListFragment.OnListFragmentInteractionListener,
+        ToastHelper {
 
     private View container;
 
@@ -54,7 +57,25 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        showNotificationListFragment();
+        //showNotificationListFragment();
+
+        LocalNotificationHelper.setDebugMode(true);
+        LocalNotificationHelper.setDefaultLargeIcon(R.drawable.app_icon);
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    void handleIntent(Intent intent) {
+        if (intent == null)
+            return;
+        String data = LocalNotificationHelper.parseNotificationData(intent);
+        System.out.println("----#### action:[ " + data + " ] ####----");
     }
 
     @Override
@@ -116,6 +137,7 @@ public class MainActivity extends AppCompatActivity
     void showNotificationListFragment() {
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.content, NotificationListFragment.newInstance()).
+                addToBackStack(NotificationListFragment.class.getName()).
                 commitAllowingStateLoss();
     }
 
@@ -178,21 +200,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createNotificationWithConfirmation(int id, String title, String content, long triggerDelay, long repeatDelay) {
-        if (title == null) {
-            title = getString(R.string.app_name);
-        }
-        boolean scheduled = LocalNotificationHelper.schedule(
-                id,
-                content,
-                triggerDelay,
-                repeatDelay
-        );
-        if (scheduled) {
+        LocalNotification notification = new LocalNotificationHelper.Scheduler(id, content)
+                .setTextTitle(title)
+                .setTriggerDelay(triggerDelay)
+                .setRepeatDelay(repeatDelay)
+                .setData("Need to by milk")
+                .schedule();
+        if (notification != null) {
             showToast(getString(R.string.msg_notification_schedule));
             showNotificationListFragment();
         }
-        //refreshCurrentFragment();
     }
+
 
     @Override
     public void showToast(String message) {
@@ -204,9 +223,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void showToast(int messageId) {
+        Snackbar.make(
+                container,
+                messageId,
+                Snackbar.LENGTH_SHORT
+        ).show();
+    }
+
+    @Override
     public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager)
-                getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(container.getWindowToken(), 0);
         }

@@ -1,4 +1,4 @@
-package info.ankurpandya.localnotificaion.demo.fragments;
+package info.ankurpandya.localnotificaion.demo.adapters;
 
 import android.helper.entities.LocalNotification;
 import android.support.v7.widget.RecyclerView;

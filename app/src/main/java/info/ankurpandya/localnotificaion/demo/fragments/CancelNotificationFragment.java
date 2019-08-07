@@ -116,8 +116,6 @@ public class CancelNotificationFragment extends Fragment {
 
         void isScheduled(int notificationId, LocalNotificationStatusHandler callback);
 
-        void showToast(String message);
-
         void hideKeyboard();
 
         void cancelAllNotifications();

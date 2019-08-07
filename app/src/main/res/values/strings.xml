@@ -19,6 +19,7 @@
     <string name="msg_error_txt_notification">Please enter some text to show in notification</string>
     <string name="msg_error_txt_id">Please enter notification id to cancel</string>
     <string name="msg_notification_schedule">Notification scheduled</string>
+    <string name="msg_notification_schedule_error">Error while scheduling notification</string>
     <string name="msg_notification_cancelled">Notification unscheduled</string>
     <string name="confirm_cancel_notification_title">Unscheduled notification </string>
     <string name="msg_all_notification_cancelled">All notifications unscheduled</string>
@@ -32,4 +33,12 @@
     <string name="txt_empty_notification_list">No notification scheduled. User + to schedule a notification now</string>
     <string name="msg_notification_not_scheduled_id">No notification scheduled on this id</string>
     <string name="repeat">Repeat</string>
+    <string name="quick_notification">Quick Notification</string>
+    <string name="schedule">Schedule</string>
+    <string name="notification_with_delay">Notification with delay</string>
+    <string name="repeating_notification_with_delay">Repeating notification with delay</string>
+    <string name="schedule_on_time">Schedule notification on time</string>
+    <string name="hint_trigger_time">Trigger Time</string>
+    <string name="schedule_repeating_notification_on_time">Schedule repeating notification on time</string>
+    <string name="hint_repeat_after">Repeat After</string>
 </resources>

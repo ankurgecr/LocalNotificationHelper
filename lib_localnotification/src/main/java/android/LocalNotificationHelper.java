@@ -2,7 +2,7 @@ package android;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.content.Context;
+import android.content.Intent;
 import android.helper.entities.LocalNotification;
 import android.helper.entities.LocalNotificationHandler;
 import android.helper.entities.LocalNotificationStatusHandler;
@@ -31,8 +31,10 @@ public class LocalNotificationHelper {
     public static final String KEY_DATA = "LNH_DATA";
 
     private static String mDefaultTitle;
+
     @DrawableRes
     private static int mDefaultSmallIcon = -1;
+
     @DrawableRes
     private static int mDefaultLargeIcon = -1;
 
@@ -40,26 +42,6 @@ public class LocalNotificationHelper {
 
     private static String defaultActionActivity = null;
 
-    /**
-     * call this method in 'onCreate' of your Application or Activity class
-     * <p>
-     * This method is Deprecated as Context is not required for upcoming versions.
-     * No need to call init, by default App Name will be used as Notification Title
-     * and default drawable will be shown as Notification smallIcon
-     *
-     * @param context      - Application or Activity context
-     * @param defaultTitle - Text you want to show by default on Title of Local Notification
-     * @param defaultIcon  - Icon you want to show by default with Local Notification
-     */
-    @Deprecated
-    public static void init(
-            Context context,
-            String defaultTitle,
-            @DrawableRes int defaultIcon
-    ) {
-        mDefaultTitle = defaultTitle;
-        mDefaultSmallIcon = defaultIcon;
-    }
 
     /**
      * @return default title for Notifications. If NULL or BLANK, it will show Application name
@@ -126,230 +108,115 @@ public class LocalNotificationHelper {
         LocalNotificationHelper.defaultActionActivity = defaultActionActivity;
     }
 
-    /**
-     * call this method in 'onCreate' of your Application or Activity class
-     *
-     * @param defaultTitle - Text you want to show by default on Title of Local Notification
-     * @param smallIcon    - Small Icon you want to show by default with Local Notification
-     * @param largeIcon    - Large Icon you want to show by default with Local Notification
-     */
-    public static void init(
-            String defaultTitle,
-            @DrawableRes int smallIcon,
-            @DrawableRes int largeIcon
-    ) {
-        mDefaultTitle = defaultTitle;
-        mDefaultSmallIcon = smallIcon;
-        mDefaultLargeIcon = largeIcon;
-    }
+    public static class Scheduler {
 
-    /**
-     * Schedules a new One-Time local notification and overrides if the
-     * same notification is scheduled with same 'notificationId'
-     * <p>
-     * This method will be removed in up coming version as it does not allow user to specify
-     * different values for DELAY and REPEAT Timings
-     *
-     * @param notificationId - Unique int id of {@link LocalNotification}
-     * @param textContent    - Body text of your {@link LocalNotification}
-     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
-     * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
-     * @param isRepeat       - True if notification need to be repeated after given delay
-     * @return true if notification scheduled successfully
-     */
-    @Deprecated
-    public static boolean schedule(
-            int notificationId,
-            String textContent,
-            String data,
-            long delay,
-            boolean isRepeat
-    ) {
-        return schedule(
-                notificationId,
-                null,
-                mDefaultSmallIcon,
-                mDefaultLargeIcon,
-                mDefaultTitle,
-                textContent,
-                defaultActionActivity,
-                data,
-                delay,
-                isRepeat ? delay : 0
-        );
-    }
+        private int notificationId;
 
-    /**
-     * Schedules a new One-Time local notification and overrides if the
-     * same notification is scheduled with same 'notificationId'
-     *
-     * @param notificationId - Unique int id of {@link LocalNotification}
-     * @param textContent    - Body text of your {@link LocalNotification}
-     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
-     * @param delay          - Delay time in millis after which your {@link LocalNotification} should be triggered
-     * @return true if notification scheduled successfully
-     */
-    public static boolean schedule(
-            int notificationId,
-            String textContent,
-            String data,
-            long delay
-    ) {
-        return schedule(
-                notificationId,
-                null,
-                mDefaultSmallIcon,
-                mDefaultLargeIcon,
-                mDefaultTitle,
-                textContent,
-                defaultActionActivity,
-                data,
-                delay,
-                0
-        );
-    }
+        private String channelId;
 
-    /**
-     * Schedules a new local notification and overrides if the
-     * same notification is scheduled with same 'notificationId'
-     *
-     * @param notificationId - Unique int id of {@link LocalNotification}
-     * @param textContent    - Body text of your {@link LocalNotification}
-     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
-     * @param triggerDelay   - Delay time in millis after which your {@link LocalNotification} should be triggered
-     * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated
-     * @return true if notification scheduled successfully
-     */
-    public static boolean schedule(
-            int notificationId,
-            String textContent,
-            String data,
-            long triggerDelay,
-            long repeatDelay
-    ) {
-        return schedule(
-                notificationId,
-                null,
-                mDefaultSmallIcon,
-                mDefaultLargeIcon,
-                mDefaultTitle,
-                textContent,
-                defaultActionActivity,
-                data,
-                triggerDelay,
-                repeatDelay
-        );
-    }
+        private String textTitle = mDefaultTitle;
 
-    /**
-     * Schedules a new One-Time local notification and overrides if the
-     * same notification is scheduled with same 'notificationId'
-     *
-     * @param notificationId - Unique int id of {@link LocalNotification}
-     * @param textContent    - Body text of your {@link LocalNotification}
-     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
-     * @param triggerTime    - Time on which your {@link LocalNotification} should be triggered
-     * @return true if notification scheduled successfully
-     */
-    public static boolean schedule(
-            int notificationId,
-            String textContent,
-            String data,
-            Date triggerTime
-    ) {
-        long delay = triggerTime.getTime() - System.currentTimeMillis();
-        if (delay < 0)
-            delay = 0;
-        return schedule(
-                notificationId,
-                textContent,
-                data,
-                delay
-        );
-    }
+        private String textContent;
 
-    /**
-     * Schedules a new local notification and overrides if the
-     * same notification is scheduled with same 'notificationId'
-     *
-     * @param notificationId - Unique int id of {@link LocalNotification}
-     * @param textContent    - Body text of your {@link LocalNotification}
-     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
-     * @param triggerTime    - Time on which your {@link LocalNotification} should be triggered
-     * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated
-     * @return true if notification scheduled successfully
-     */
-    public static boolean schedule(
-            int notificationId,
-            String textContent,
-            String data,
-            Date triggerTime,
-            long repeatDelay
-    ) {
-        long delay = triggerTime.getTime() - System.currentTimeMillis();
-        if (delay < 0)
-            delay = 0;
-        return schedule(
-                notificationId,
-                textContent,
-                data,
-                delay,
-                repeatDelay
-        );
-    }
+        private String activity = defaultActionActivity;
 
-    /**
-     * Schedules a new local notification and overrides if the
-     * same notification is scheduled with same 'notificationId'
-     *
-     * @param notificationId - Unique int id of {@link LocalNotification}
-     * @param channelId      - Channel name on which you want to display your {@link LocalNotification}
-     * @param smallIcon      - Small monochrome png icon drawable you want to show with your {@link LocalNotification}
-     * @param largeIcon      - Colored icon image drawable you want to show with your {@link LocalNotification}
-     * @param textTitle      - Title text of your {@link LocalNotification}
-     * @param textContent    - Body text of your {@link LocalNotification}
-     * @param actionActivity - Full path of Acitivity to launch when Notification clicked, null by default {@link LocalNotification}
-     * @param data          - Data to be passed with Notification with intent extra KEY_DATA
-     * @param triggerDelay   - Delay time in millis after which your {@link LocalNotification} should be triggered
-     * @param repeatDelay    - Repeats after time in millis after which your {@link LocalNotification} should be repeated, must be greater than or equals to 'PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS'
-     * @return true if notification scheduled successfully
-     */
-    public static boolean schedule(
-            int notificationId,
-            String channelId,
-            @DrawableRes int smallIcon,
-            @DrawableRes int largeIcon,
-            String textTitle,
-            String textContent,
-            String actionActivity,
-            String data,
-            long triggerDelay,
-            long repeatDelay
-    ) {
-        if (!debugMode && repeatDelay > 0 && repeatDelay < PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS) {
-            throw new IllegalArgumentException("Unable to schedule repeating notification with repeat time less then [" + PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS + "] millis");
+        private String data;
+
+        private int smallIcon = mDefaultSmallIcon;
+
+        private int largeIcon = mDefaultLargeIcon;
+
+        private long triggerTime;
+
+        private long triggerDelay;
+
+        private long repeatDelay;
+
+        public Scheduler(int notificationId, String textContent) {
+            this.notificationId = notificationId;
+            this.textContent = textContent;
         }
 
-        cancel(notificationId);
-        if ((channelId == null || channelId.trim().length() == 0) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channelId = TAG;// NotificationChannel.DEFAULT_CHANNEL_ID;
+        public Scheduler setChannelId(String channelId) {
+            this.channelId = channelId;
+            return this;
         }
 
-        LocalNotification notification = new LocalNotification();
-        notification.notificationId = notificationId;
-        notification.channelId = channelId;
-        notification.smallIcon = smallIcon;
-        notification.largeIcon = largeIcon;
-        notification.textTitle = textTitle;
-        notification.textContent = textContent;
-        notification.triggerTime = System.currentTimeMillis() + triggerDelay;
-        notification.triggerDelay = triggerDelay;
-        notification.repeatDelay = repeatDelay;
-        notification.activity = actionActivity;
-        notification.data = data;
-        //SystemClock.elapsedRealtime() - can use this here for accuracy
-        scheduleNotificationJob(notification);
-        return true;
+        public Scheduler setTextTitle(String textTitle) {
+            this.textTitle = textTitle;
+            return this;
+        }
+
+        public Scheduler setActivity(String activity) {
+            this.activity = activity;
+            return this;
+        }
+
+        public Scheduler setData(String data) {
+            this.data = data;
+            return this;
+        }
+
+        public Scheduler setSmallIcon(int smallIcon) {
+            this.smallIcon = smallIcon;
+            return this;
+        }
+
+        public Scheduler setLargeIcon(int largeIcon) {
+            this.largeIcon = largeIcon;
+            return this;
+        }
+
+        public Scheduler setTriggerTime(long triggerTime) {
+            this.triggerTime = triggerTime;
+            return this;
+        }
+
+        public Scheduler setTriggerDelay(long triggerDelay) {
+            this.triggerDelay = triggerDelay;
+            return this;
+        }
+
+        public Scheduler setTriggerTime(Date time) {
+            long delay = time.getTime() - System.currentTimeMillis();
+            if (delay < 0)
+                delay = 0;
+            this.triggerDelay = delay;
+            return this;
+        }
+
+        public Scheduler setRepeatDelay(long repeatDelay) {
+            this.repeatDelay = repeatDelay;
+            return this;
+        }
+
+        public LocalNotification schedule() {
+            if (!debugMode && repeatDelay > 0 && repeatDelay < PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS) {
+                throw new IllegalArgumentException("Unable to schedule repeating notification with repeat time less then [" + PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS + "] millis");
+            }
+
+            LocalNotificationHelper.cancel(notificationId);
+            if ((channelId == null || channelId.trim().length() == 0) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                channelId = TAG;// NotificationChannel.DEFAULT_CHANNEL_ID;
+            }
+
+            LocalNotification notification = new LocalNotification();
+            notification.notificationId = this.notificationId;
+            notification.channelId = this.channelId;
+            notification.smallIcon = this.smallIcon;
+            notification.largeIcon = this.largeIcon;
+            notification.textTitle = this.textTitle;
+            notification.textContent = this.textContent;
+            notification.triggerTime = System.currentTimeMillis() + this.triggerDelay;
+            notification.triggerDelay = this.triggerDelay;
+            notification.repeatDelay = this.repeatDelay;
+            notification.activity = this.activity;
+            notification.data = data;
+
+            scheduleNotificationJob(notification);
+
+            return notification;
+        }
     }
 
     /**
@@ -388,7 +255,6 @@ public class LocalNotificationHelper {
             }
         });
     }
-
 
     /**
      * Returns the list of all {@link LocalNotification}s which
@@ -516,6 +382,13 @@ public class LocalNotificationHelper {
         );
     }
 
+    
+    public static @Nullable
+    String parseNotificationData(Intent intent) {
+        if (intent == null)
+            return null;
+        return intent.getStringExtra(LocalNotificationHelper.KEY_DATA);
+    }
 
     @Deprecated
     public static void destroy() {
